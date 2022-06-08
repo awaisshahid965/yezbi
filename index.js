@@ -1,5 +1,7 @@
 // imports
 const express = require('express');
+const cors = require('cors');
+const fileUpload = require("express-fileupload");
 const { connectToDatabase } = require('./config/database.config');
 
 
@@ -8,7 +10,9 @@ const app = express();
 
 
 // middlewares
+app.use(cors());
 app.use(express.static('public'));
+app.use(fileUpload());
 app.use(express.json());
 
 
@@ -28,3 +32,4 @@ app.get('/', (req, res) => {
 
 
 app.use('/api', require('./routes/api/UserAuthApi'))
+app.use('/api', require('./routes/api/ProfileCardApi'))

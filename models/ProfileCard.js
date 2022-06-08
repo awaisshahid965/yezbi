@@ -4,16 +4,20 @@ const profileCardSchema = new Schema({
   name: {
     type: String
   },
-  imgSrc: {
+  email: {
     type: String
   },
-  userId: {
+  imgSrc: {
     type: String,
-    required: true
+    default: ""
   },
   shortUserId: {
     type: String,
     required: true
+  },
+  premium: {
+    type: Boolean,
+    default: false
   },
   linkedin: [{
   	type: String
