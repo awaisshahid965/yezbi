@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const fileUpload = require("express-fileupload");
 const { connectToDatabase } = require('./config/database.config');
+const ProfileCard = require('./models/ProfileCard');
 
 
 // var setups
@@ -28,6 +29,27 @@ app.get('/', (req, res) => {
 	res.json({
 		'ServerRunning': 'Okay...'
 	})
+});
+
+app.get('/:sid/share', async (req, res) => {
+	let { sid } = req.params;
+	try {
+		const usrProfileCard = await ProfileCard.findOne({ shortUserId: sid }).select('name email activeList');
+		let linksVisible = [];
+		for(let activeListVal of usrProfileCard.activeList) {
+			if (activeListVal.showLink) {
+				linksVisible.push({
+					showLink: activeListVal.showLink,
+					linkName: activeListVal.linkName
+				});
+			}
+		}
+		res.render('profile-card', {
+			linksVisible,
+			name: usrProfileCard.name,
+			email: usrProfileCard.email
+		});
+	} catch(err) {}
 });
 
 

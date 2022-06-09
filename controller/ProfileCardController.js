@@ -1,11 +1,10 @@
 const ProfileCard = require('../models/ProfileCard');
 const ShortUniqueId = require('short-unique-id');
 const fs = require('fs');
-// const path = require("path");
 
 
 
-module.exports.userTextData = async function (req, res) {
+module.exports.userTextData = async function(req, res) {
 	let { name, email } = req.body;
 	try {
 		let shortUserId = (new ShortUniqueId({ length: 16 }))();
@@ -15,8 +14,9 @@ module.exports.userTextData = async function (req, res) {
 			shortUserId
 		});
 		await usrProfileCard.save();
-		res.status(201).json({
-			profileCreated: true
+		res.status(200).json({
+			profileCreated: true,
+			shortLink: `${req.get('host')}/${usrProfileCard.shortUserId}/share`
 		})
 	} catch(err) {
 		res.status(500).json({
@@ -26,7 +26,7 @@ module.exports.userTextData = async function (req, res) {
 	}
 }
 
-module.exports.userImageData = async function (req, res) {
+module.exports.userImageData = async function(req, res) {
 	if (!req.files) {
 		return res.status(400).json({
 			fileWritten: false,
@@ -42,7 +42,7 @@ module.exports.userImageData = async function (req, res) {
 		});
 	}
 
-	let { email = 'awais123@xyz.com' } = req.body;
+	let { email = 'awais12@xyz.com' } = req.body;
 	try {
 		const userProfileCard = await ProfileCard.findOne({
 			email
@@ -58,14 +58,14 @@ module.exports.userImageData = async function (req, res) {
 				}
 			});
 		}
-		let imgSrc = `public/IMG-${email.split('@')[0]}-${(new ShortUniqueId({ length: 10 }))()}.${imageFile.mimetype.split('/')[1]}`;
+		let imgSrc = `public/profile-images/IMG-${email.split('@')[0]}-${(new ShortUniqueId({ length: 10 }))()}.${imageFile.mimetype.split('/')[1]}`;
 		fs.writeFile(imgSrc, imageFile.data, async (err, file) => {
 			if(err) {
 				throw err;
 			} else {
 				userProfileCard.imgSrc = imgSrc;
 				await userProfileCard.save();
-				res.status(201).json({
+				res.status(200).json({
 					fileWritten: true
 				})
 			}
@@ -78,36 +78,166 @@ module.exports.userImageData = async function (req, res) {
 	}
 }
 
-module.exports.storeLink = async function (req, res) {
-	let { email, linkType, linkAdress } = req.body;
+module.exports.storeLink = async function(req, res) {
+	let { email = '', linkType = '', linkAdress = '' } = req.body;
 	linkType = linkType.toLowerCase();
 	try {
-		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} premium`);
-		if (!email) {
+		if (!email || !linkType || !linkAdress) {
 			throw new Error();
 		}
-		// if (!usrProfileCard.premium && )
-		console.log(usrProfileCard[linkType])
-		res.end()
-		// usrProfileCard[linkType] = [...usrProfileCard[linkType], linkAdress];
-		// await usrProfileCard.save();
-		// res.status(201).json({
-		// 	linkAdded: true,
-		// 	linkType
-		// });
+		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} activeList premium`);
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		if (!usrProfileCard.premium && usrProfileCard[linkType].length > 0) {
+			return res.status(402).json({
+				linkAdded: false,
+				error: "Buy premium to add more links!"
+			});
+		}
+		usrProfileCard[linkType].push(linkAdress);
+		// let index = usrProfileCard.activeList.findIndex(el => el.name === linkType);
+		if(usrProfileCard.activeList.findIndex(el => el.name === linkType) === -1) {
+			usrProfileCard.activeList.push({
+				linkName: linkType,
+				showLink: false
+			})
+		}
+		await usrProfileCard.save();
+		return res.status(200).json({
+			linkAdded: true
+		});
 	} catch(err) {
 		res.status(500).json({
 			linkAdded: false,
+			error: "Failed to add link. possible reasons: invalid/empty email, linkType, linkAdded OR No such user found."
+		});
+	}
+}
+
+module.exports.fetchOneTypeLinks = async function(req, res) {
+	let { email = '', linkType = '' } = req.body;
+	linkType = linkType.toLowerCase();
+	try {
+		if (!email || !linkType) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} premium`);
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		if(usrProfileCard[linkType].length === 0) {
+			return res.status(200).json({
+				hasLinks: false,
+				linkType,
+				links: []
+			});
+		} else {
+			return res.status(200).json({
+				hasLinks: true,
+				linkType,
+				links: usrProfileCard[linkType]
+			});
+		}
+	} catch(err) {
+		res.status(500).json({
+			hasLinks: false,
 			linkType,
-			error: "Failed to save user link! possible reasons: No User Found OR Database write Error."
+			links: [],
+			error: "Failed to fetch link. possible reasons: invalid/empty email, linkType OR No user/links found."
+		});
+	}
+}
+
+module.exports.fetchAllLinks = async function(req, res) {
+	let { email = '' } = req.body;
+	try {
+		if (!email) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} premium`);
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+
+		// for()
+	} catch(err) {
+		res.status(500).json({
+			hasLinks: false,
+			links: [],
+			error: "Failed to fetch links. possible reasons: invalid/empty email OR No user in database found."
+		});
+	}
+}
+
+module.exports.activeLinksList = async function(req, res) {
+	let { email = '', onlyVisible = false } = req.body;
+	try {
+		if (!email) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('activeList');
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		let linksVisible = [], linksNotVisible = [];
+		for(let activeListVal of usrProfileCard.activeList) {
+			if (activeListVal.showLink) {
+				linksVisible.push({
+					showLink: activeListVal.showLink,
+					linkName: activeListVal.linkName
+				});
+			} else {
+				linksNotVisible.push({
+					showLink: activeListVal.showLink,
+					linkName: activeListVal.linkName
+				});
+			}
+		}
+		return res.status(200).json(onlyVisible ? {linksVisible} : {linksVisible, linksNotVisible})
+
+	} catch(err) {
+		res.status(500).json({
+			error: "Failed to fetch active links. possible reasons: invalid/empty email OR No user in database found."
+		});
+	}
+}
+
+module.exports.updateActiveLink = async function(req, res) {
+	let { email = '', linkType = '', showLink = false } = req.body;
+	try {
+		if (!email || !linkType) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('activeList');
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		let index = usrProfileCard.activeList.findIndex(el => el.linkName === linkType);
+		if(index === -1) {
+			throw new Error();
+		} else {
+			if(usrProfileCard.activeList[index].showLink !== showLink) {
+				usrProfileCard.activeList[index].showLink = showLink;
+				await usrProfileCard.save();
+			}
+		}
+		return res.status(200).json({
+			changedLinkData: usrProfileCard.activeList[index]
+		});
+
+	} catch(err) {
+		res.status(500).json({
+			changedLinkData: null,
+			error: "Failed to fetch active links. possible reasons: invalid/empty email, linkType OR No user in database found."
 		});
 	}
 }
 
 // 'awais123@xyz.com'
 
-// {
-// 	"email": "awais123@xyz.com",
-// 	"linkType": "linkedIn",
-// 	"linkAdress": ".../.../.../.../"
-// }
+// [
+
+// ]
+
+// 03064182040

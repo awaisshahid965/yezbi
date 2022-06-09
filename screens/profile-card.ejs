@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>User Detail Card</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+
+	<main class="container">
+		<div class="admin_banner"></div>
+		<div class="admin_card--wrapper">
+			<div class="admin_card">
+				<img class="admin_card--img" src="http://test.beinnovative.in/assets/front/img/user/vcard/61d73ebe6859c.png" alt="card cover pic">
+				<h1 class="admin_name">
+					<%= name %>
+				</h1>
+				<div class="actions">
+					<div class="action_card">
+						<a href="#" class="action_link call">
+							<i class="fa-solid fa-mobile-screen-button"></i>
+						</a>
+						<p class="action_title">Call</p>
+					</div>
+					<div class="action_card">
+						<a href="#" class="action_link whatsapp">
+							<i class="fa-brands fa-whatsapp"></i>
+						</a>
+						<p class="action_title">Whatsapp</p>
+					</div>
+					<div class="action_card">
+						<a href="#" class="action_link mail">
+							<i class="fa-solid fa-envelope"></i>
+						</a>
+						<p class="action_title">Mail</p>
+					</div>
+				</div>
+				<div class="admin_btns">
+					<a href="#" class="btn btn-primary">
+						<i class="fa-solid fa-plus"></i> Add to Contact
+					</a>
+					<a href="#" class="btn btn-primary">
+						<i class="fa-solid fa-share-from-square"></i> Share vCard
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="info">
+			<div class="info_card">
+				<a href="#" class="info_icon">	
+					<i class="fa-solid fa-mobile-screen-button"></i>
+				</a>
+				<div class="info_detail">
+					<p class="info_title">Phone</p>
+					<a href="#" class="info_link">+919748821276</a>
+				</div>
+			</div>
+
+			<div class="info_card">
+				<a href="mailto:<%= email %>" class="info_icon">	
+					<i class="fa-solid fa-at"></i>
+				</a>
+				<div class="info_detail">
+					<p class="info_title">Email</p>
+					<a href="mailto:<%= email %>" class="info_link">
+					<%= email %></a>
+				</div>
+			</div>
+
+			<div class="info_card">
+				<a href="#" class="info_icon">	
+					<i class="fa-solid fa-location-dot"></i>
+				</a>
+				<div class="info_detail">
+					<p class="info_title">Address</p>
+					<a href="#" class="info_link">72 Mitra Para Road</a>
+				</div>
+			</div>
+		</div>
+	</main>
+
+</body>
+</html>

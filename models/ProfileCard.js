@@ -1,5 +1,10 @@
 const { Schema, model } = require('mongoose');
 
+function ActiveLink(n, l) {
+  this.linkName = n;
+  this.link = l;
+}
+
 const profileCardSchema = new Schema({
   name: {
     type: String
@@ -24,6 +29,10 @@ const profileCardSchema = new Schema({
   }],
   facebook: [{
     type: String
+  }],
+  activeList: [{
+    linkName: { type: String },
+    showLink: { type: Boolean }
   }]
 });
 
