@@ -24,7 +24,7 @@ module.exports.userTextData = async function(req, res) {
 	} catch(err) {
 		res.status(500).json({
 			profileCreated: false,
-			error: "Failed to save user details. possible reasons: invalid/empty email OR name"
+			error: "Failed to save user details. possible reasons: invalid/empty email OR name || User Already Exists..."
 		})
 	}
 }
@@ -99,11 +99,11 @@ module.exports.storeLink = async function(req, res) {
 			});
 		}
 		usrProfileCard[linkType].push(linkAdress);
-		// let index = usrProfileCard.activeList.findIndex(el => el.name === linkType);
-		if(usrProfileCard.activeList.findIndex(el => el.name === linkType) === -1) {
+		// let index = usrProfileCard.activeList.findIndex(el => el.linkName === linkType);
+		if(usrProfileCard.activeList.findIndex(el => el.linkName === linkType) === -1) {
 			usrProfileCard.activeList.push({
 				linkName: linkType,
-				showLink: false
+				showLink: true
 			})
 		}
 		await usrProfileCard.save();
@@ -241,10 +241,31 @@ module.exports.updateActiveLink = async function(req, res) {
 	}
 }
 
-// 'awais123@xyz.com'
 
-// [
+module.exports.deleteLink = async function(req, res) {
+	let { email = '', linkType = '' } = req.body;
+	try {
+		if (!email || !linkType) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} activeList`);
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		usrProfileCard[linkType] = [];
+		usrProfileCard.activeList = usrProfileCard.activeList.filter(upd => upd.linkName !== linkType);
+		await usrProfileCard.save();
+		res.json({
+			linkDeleted: true,
+			deletedLinkType: linkType,
+		})
 
-// ]
-
-// 03064182040
+	} catch(err) {
+		console.log(err);
+		res.status(500).json({
+			linkDeleted: false,
+			deletedLinkType: linkType,
+			error: "Failed to delete link. possible reasons: invalid/empty email, linkType OR No user in database found."
+		});
+	}
+}

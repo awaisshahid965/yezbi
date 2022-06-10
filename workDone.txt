@@ -28,5 +28,10 @@ Endpoints = {
 		useCase: "Used to change added link status link on/off",
 		requestVar: { email, linkType: 'facebook', showLink: "true/false" },
 		response: { changedLinkData: Object, error: "if false" },
+	},
+	"/api/delete/link": {
+		useCase: "Used to delete any link (One at a time)",
+		requestVar: { email, linkType: 'facebook' },
+		response: { linkDeleted: "true/false", linkType, error: "if false" },
 	}
 }
