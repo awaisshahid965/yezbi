@@ -1,0 +1,32 @@
+
+
+url = "http://15.207.71.228:8080/"
+Endpoints = {
+	"/api/store/data/text": {
+		useCase: "When ask username, submit it to this endpoint with email",
+		requestVar: { email, password },
+		response: { profileCreated: "true/false" },
+		resultantChanges: "This Route causes to create user profile card with its unique link"
+	},
+	"/api/store/data/image": {
+		useCase: "Used to add/upload profile image",
+		requestVar: { email, image },
+		requestHeader: "multipart/form-data"
+		response: { fileWritten: "true/false", error: "if false" },
+	},
+	"/api/store/link": {
+		useCase: "Used to add link",
+		requestVar: { email, linkType: "facebook", linkAdress: 'link|username|string(any)' },
+		response: { linkAdded: "true/false", error: "if false" },
+	},
+	"/api/get/links/added": {
+		useCase: "Used to fetch links that are added",
+		requestVar: { email },
+		response: { linksVisible: Array, linksNotVisible: Array, error: "if false" },
+	},
+	"/api/update/link/active": {
+		useCase: "Used to change added link status link on/off",
+		requestVar: { email, linkType: 'facebook', showLink: "true/false" },
+		response: { changedLinkData: Object, error: "if false" },
+	}
+}

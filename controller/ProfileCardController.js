@@ -5,8 +5,11 @@ const fs = require('fs');
 
 
 module.exports.userTextData = async function(req, res) {
-	let { name, email } = req.body;
+	let { name = '', email = '' } = req.body;
 	try {
+		if (!name || !email) {
+			throw new Error();
+		}
 		let shortUserId = (new ShortUniqueId({ length: 16 }))();
 		const usrProfileCard = new ProfileCard({
 			name,
@@ -21,7 +24,7 @@ module.exports.userTextData = async function(req, res) {
 	} catch(err) {
 		res.status(500).json({
 			profileCreated: false,
-			error: "Failed to save user details. Internal Server Error!"
+			error: "Failed to save user details. possible reasons: invalid/empty email OR name"
 		})
 	}
 }
