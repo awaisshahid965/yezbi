@@ -34,7 +34,7 @@ const profileCardSchema = new Schema({
   number: [{
     type: String
   }],
-  email: [{
+  email_link: [{
     type: String
   }],
   instagram: [{
@@ -168,5 +168,5 @@ module.exports = ProfileCard;
 //   'paypal',      'customlink', 'linktree',
 //   'discord',     'onlyfans',   'opensea',
 //   'podacasts',   'hoobe',      'spotify',
-//   'applemusic',  'soundcloud'
+//   'applemusic',  'soundcloud', 'email_link'
 // ]
