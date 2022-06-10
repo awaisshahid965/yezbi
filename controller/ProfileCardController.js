@@ -174,7 +174,7 @@ module.exports.fetchAllLinks = async function(req, res) {
 }
 
 module.exports.activeLinksList = async function(req, res) {
-	let { email = '', onlyVisible = false } = req.body;
+	let { email = '' } = req.body;
 	try {
 		if (!email) {
 			throw new Error();
@@ -183,21 +183,25 @@ module.exports.activeLinksList = async function(req, res) {
 		if (!usrProfileCard) {
 			throw new Error();
 		}
-		let linksVisible = [], linksNotVisible = [];
+		let linksAdded = [];
 		for(let activeListVal of usrProfileCard.activeList) {
-			if (activeListVal.showLink) {
-				linksVisible.push({
-					showLink: activeListVal.showLink,
-					linkName: activeListVal.linkName
-				});
-			} else {
-				linksNotVisible.push({
-					showLink: activeListVal.showLink,
-					linkName: activeListVal.linkName
-				});
-			}
+			linksAdded.push({
+				showLink: activeListVal.showLink,
+				linkName: activeListVal.linkName
+			});
+			// if (activeListVal.showLink) {
+			// 	linksVisible.push({
+			// 		showLink: activeListVal.showLink,
+			// 		linkName: activeListVal.linkName
+			// 	});
+			// } else {
+			// 	linksNotVisible.push({
+			// 		showLink: activeListVal.showLink,
+			// 		linkName: activeListVal.linkName
+			// 	});
+			// }
 		}
-		return res.status(200).json(onlyVisible ? {linksVisible} : {linksVisible, linksNotVisible})
+		return res.status(200).json({linksAdded});
 
 	} catch(err) {
 		res.status(500).json({
