@@ -53,5 +53,4 @@ app.get('/:sid/share', async (req, res) => {
 });
 
 
-app.use('/api', require('./routes/api/UserAuthApi'))
 app.use('/api', require('./routes/api/ProfileCardApi'))
