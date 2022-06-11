@@ -269,3 +269,46 @@ module.exports.deleteLink = async function(req, res) {
 		});
 	}
 }
+
+module.exports.updateLink = async function(req, res) {
+	let { email = '', linkType = '', linksArray = [] } = req.body;
+	try {
+		if(!email || !linkType || !linksArray.length || !Array.isArray(linksArray)) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} premium`);
+		if(!usrProfileCard) {
+			throw new Error();
+		}
+		if(!usrProfileCard.premium && linksArray.length > 1) {
+			return res.json({
+				linkUpdated: false,
+				updatedLinkType: linkType,
+				error: "Not Premium User! Only one link in array allowed..."
+			});
+		}
+		if(usrProfileCard[linkType].length === 0) {
+			return res.json({
+				linkUpdated: false,
+				updatedLinkType: linkType,
+				error: "This Link is not added by user..."
+			});
+		}
+
+		usrProfileCard[linkType] = linksArray;
+		await usrProfileCard.save();
+
+		res.json({
+			linkUpdated: true,
+			updatedLinkType: linkType,
+		});
+
+	} catch(err) {
+		console.log(err);
+		res.status(500).json({
+			linkUpdated: false,
+			updatedLinkType: linkType,
+			error: "Failed to update link. possible reasons: invalid/empty email, linkType, linksArray OR No user in database found."
+		});
+	}
+}

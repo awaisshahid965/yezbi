@@ -33,5 +33,10 @@ Endpoints = {
 		useCase: "Used to delete any link (One at a time)",
 		requestVar: { email, linkType: 'facebook' },
 		response: { linkDeleted: "true/false", linkType, error: "if false" },
+	},
+	"/api/update/link": {
+		useCase: "Used to update any link (One at a time)",
+		requestVar: { email, linkType: 'facebook', linksArray = ['../', '../'] },
+		response: { linkUpdated: "true/false", updatedLinkType, error: "if false" },
 	}
 }

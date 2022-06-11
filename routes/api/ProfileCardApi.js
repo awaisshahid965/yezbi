@@ -6,7 +6,8 @@ const {
 	fetchOneTypeLinks,
 	activeLinksList,
 	updateActiveLink,
-	deleteLink
+	deleteLink,
+	updateLink
 } = require('../../controller/ProfileCardController');
 
 profileAuthRoute.post('/store/data/text', userTextData);
@@ -21,6 +22,7 @@ profileAuthRoute.post('/get/links/added', activeLinksList);
 profileAuthRoute.post('/update/link/active', updateActiveLink);
 
 profileAuthRoute.post('/delete/link', deleteLink);
+profileAuthRoute.post('/update/link', updateLink);
 
 
 module.exports = profileAuthRoute;
