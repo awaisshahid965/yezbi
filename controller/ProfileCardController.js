@@ -45,8 +45,11 @@ module.exports.userImageData = async function(req, res) {
 		});
 	}
 
-	let { email = 'awais12@xyz.com' } = req.body;
+	let { email = '' } = req.body;
 	try {
+		if (!email) {
+			throw new Error();
+		}
 		const userProfileCard = await ProfileCard.findOne({
 			email
 		}).select('imgSrc');
