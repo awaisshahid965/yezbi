@@ -324,10 +324,11 @@ module.exports.userDetails = async function(req, res) {
 		if (!usrProfileCard) {
 			throw new Error();
 		}
+		let { name, imgSrc } = usrProfileCard;
 		res.json({
 			userDetails: {
 				name: usrProfileCard.name,
-				imageUrl: `${req.get('host')}${usrProfileCard.imgSrc.replace('public', '')}`
+				imageUrl: `${!imgSrc ? '' : req.get('host')}${imgSrc.replace('public', '')}`
 			}
 		})
 	} catch(err) {
