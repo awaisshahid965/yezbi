@@ -312,3 +312,28 @@ module.exports.updateLink = async function(req, res) {
 		});
 	}
 }
+
+module.exports.userDetails = async function(req, res) {
+	let { email = '' } = req.body;
+
+	try {
+		if (!email) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('imgSrc name');
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		res.json({
+			userDetails: {
+				name: usrProfileCard.name,
+				imageUrl: `${req.get('host')}${usrProfileCard.imgSrc.replace('public', '')}`
+			}
+		})
+	} catch(err) {
+		res.status(500).json({
+			userDetails: null,
+			error: "No Data Found! possible errors: wrong email OR no such user in database..."
+		})
+	}
+}

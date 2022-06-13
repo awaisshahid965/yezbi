@@ -38,5 +38,10 @@ Endpoints = {
 		useCase: "Used to update any link (One at a time)",
 		requestVar: { email, linkType: 'facebook', linksArray = ['../', '../'] },
 		response: { linkUpdated: "true/false", updatedLinkType, error: "if false" },
+	},
+	"/api/get/user-details": {
+		useCase: "Used to get username & image url",
+		requestVar: { email },
+		response: { userDetails: "{name, imageUrl}/null", error: "if wrong email | no user" },
 	}
 }
