@@ -1,10 +1,10 @@
 {
-  "name": "yuzki",
-  "version": "1.0.0",
+  "name": "Yuzki",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index",
+    "start": "node index",
     "dev": "nodemon index"
   },
   "keywords": [],

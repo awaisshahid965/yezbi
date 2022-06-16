@@ -1,0 +1,98 @@
+/*
+	** YEZBI Routes
+*/
+
+1): Profile Card Creation
+	-- path: "/api/create/profile-card"
+	-- Request Variables: { name(String), email(String) } whereas you can pass any name but email must be unique. If you pass already existed email, system will not create profile.
+	-- Request type: application/json
+	-- method: POST
+	-- Response: profileCreated -> true/fase, error (if false)
+
+
+
+2): Profile Image Upload
+	-- path: "/api/store/data/profile-image"
+	-- Request Variables: { imageFile, email(String) }
+	-- Request type: multipart/form-data
+	-- method: POST
+	-- Response: fileWritten -> true/fase, error (if false)
+
+
+
+3): Profile Cover Image Upload
+	-- path: "/api/store/data/cover-image"
+	-- Request Variables: { imageFile, email(String) }
+	-- Request type: multipart/form-data
+	-- method: POST
+	-- Response: fileWritten -> true/fase, error (if false)
+
+
+4): Load Redux Store
+	-- path: "/api/create/profile-card"
+	-- Request Variables: { email(String) }
+	-- Required: { email }
+	-- Request type: application/json
+	-- method: POST
+	-- Response: data -> Object/null, error (if null)
+
+
+5): Store Single Link
+	-- path: "/api/store/link"
+	-- Request Variables: { email, linkName, linkType, linkValue, isBusiness }
+	-- Details: {
+		email(String): to identify profile,
+		linkType(String): to identify what kind of link we want to save,
+		linkName(String): can be changed,
+		linkValue(String): any,
+		isBusiness(Boolean): category for links where it belongs. (Personal/Business)
+	}
+	-- Required: { email, linkType, linkValue }
+	-- Request type: application/json
+	-- method: POST
+	-- Response: linkAdded -> true/false, error (if false)
+
+
+
+6): Update Single Link
+	-- path: "/api/update/link"
+	-- Request Variables: { email, linkName, linkType, linkValue, isBusiness }
+	-- Details: {
+		email(String): to identify profile,
+		linkId(String): to find link from links array,
+		linkName(String): can be changed,
+		linkValue(String): any,
+		isBusiness(Boolean): category for links where it belongs. (Personal/Business)
+	}
+	-- Required: { email, linkId }
+	-- Request type: application/json
+	-- method: POST
+	-- Response: linkUpdated -> true/false, error (if false)
+
+
+7): Update Profile Data
+	-- path: "/api/update/profile"
+	-- Request Variables: { email, name, location, bio, businessClient, theme }
+	-- Details: {
+		email(String): to identify profile,
+		name(String): profile username,
+		location(String): user location,
+		bio(String): user bio,
+		theme(String): profile card theme,
+		businessClient(Boolean): category for links where it belongs. (Personal/Business)
+	}
+	-- Required: { email }
+	-- Request type: application/json
+	-- method: POST
+	-- Response: data -> Object/null, error (if null)
+
+
+8): Set Visibility to show links on profile-card or not
+	--path: "/api/toggle/profile-visibility"
+	-- Request Variables: { email, toggleVisibility(Boolean) }
+	-- Required: { email }
+	-- Request type: application/json
+	-- method: POST
+	-- Response: private -> true/false, error('if email not found')
+
+

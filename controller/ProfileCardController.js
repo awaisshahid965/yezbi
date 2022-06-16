@@ -2,9 +2,11 @@ const ProfileCard = require('../models/ProfileCard');
 const ShortUniqueId = require('short-unique-id');
 const fs = require('fs');
 
+const imageFormats = ['jpg', 'png', 'jpeg'];
 
+// module.exports. = async function(req, res) {}
 
-module.exports.userTextData = async function(req, res) {
+module.exports.userProfileCardCreation = async function(req, res) {
 	let { name = '', email = '' } = req.body;
 	try {
 		if (!name || !email) {
@@ -14,7 +16,9 @@ module.exports.userTextData = async function(req, res) {
 		const usrProfileCard = new ProfileCard({
 			name,
 			email,
-			shortUserId
+			shortUserId,
+			profileImgUrl: "/profile-images/default-_-_-.webp",
+			coverImgUrl: `/cover-images/cover-_-_-.${["webp", "jpg", "png"][Math.round(Math.random() * 2)]}`
 		});
 		await usrProfileCard.save();
 		res.status(200).json({
@@ -24,12 +28,12 @@ module.exports.userTextData = async function(req, res) {
 	} catch(err) {
 		res.status(500).json({
 			profileCreated: false,
-			error: "Failed to save user details. possible reasons: invalid/empty email OR name || User Already Exists..."
-		})
+			error: "Failed to save user details. possible reasons: invalid/empty email/name | User Already Exists..."
+		});
 	}
 }
 
-module.exports.userImageData = async function(req, res) {
+module.exports.userProfileImageData = async function(req, res) {
 	if (!req.files) {
 		return res.status(400).json({
 			fileWritten: false,
@@ -37,7 +41,6 @@ module.exports.userImageData = async function(req, res) {
 		});
 	}
 	let { imageFile } = req.files;
-	let imageFormats = ['jpg', 'png', 'jpeg'];
 	if (!imageFormats.includes(imageFile.mimetype.split('/')[1].toLowerCase())) {
 		return res.status(400).json({
 			fileWritten: false,
@@ -52,13 +55,13 @@ module.exports.userImageData = async function(req, res) {
 		}
 		const userProfileCard = await ProfileCard.findOne({
 			email
-		}).select('imgSrc');
+		}).select('profileImgUrl').exec();
 		if(!userProfileCard) {
 			throw new Error();
 		}
 		// delete if already has image
-		if (userProfileCard.imgSrc !== '') {
-			fs.unlink(userProfileCard.imgSrc, (err) => {
+		if (userProfileCard.profileImgUrl !== '' && !userProfileCard.profileImgUrl.includes('default-_-_-')) {
+			fs.unlink(userProfileCard.profileImgUrl, (err) => {
 				if(err) {
 					throw err;
 				}
@@ -69,7 +72,8 @@ module.exports.userImageData = async function(req, res) {
 			if(err) {
 				throw err;
 			} else {
-				userProfileCard.imgSrc = imgSrc;
+				imgSrc = imgSrc.replace('public', '');
+				userProfileCard.profileImgUrl = imgSrc;
 				await userProfileCard.save();
 				res.status(200).json({
 					fileWritten: true
@@ -79,265 +83,285 @@ module.exports.userImageData = async function(req, res) {
 	} catch(err) {
 		res.status(500).json({
 			fileWritten: false,
-			error: "Failed to save user image! possible reasons: Wrong Email OR File Write Failed."
+			error: "Failed to save user profile image! possible reasons: Wrong Email OR File Write Failed...."
+		});
+	}
+}
+
+module.exports.userCoverImageData = async function(req, res) {
+	if (!req.files) {
+		return res.status(400).json({
+			fileWritten: false,
+			error: "No files were uploaded..."
+		});
+	}
+	let { imageFile } = req.files;
+	if (!imageFormats.includes(imageFile.mimetype.split('/')[1].toLowerCase())) {
+		return res.status(400).json({
+			fileWritten: false,
+			error: `Only ${imageFormats.join(', ')} are allowed!`
+		});
+	}
+
+	let { email = '' } = req.body;
+	try {
+		if (!email) {
+			throw new Error();
+		}
+		const userProfileCard = await ProfileCard.findOne({
+			email
+		}).select('coverImgUrl');
+		if(!userProfileCard) {
+			throw new Error();
+		}
+		// delete if already has image
+		if (userProfileCard.coverImgUrl !== '' && !userProfileCard.coverImgUrl.includes('cover-_-_-')) {
+			fs.unlink(userProfileCard.coverImgUrl, (err) => {
+				if(err) {
+					throw err;
+				}
+			});
+		}
+		let imgSrc = `public/cover-images/IMG-${email.split('@')[0]}-${(new ShortUniqueId({ length: 10 }))()}.${imageFile.mimetype.split('/')[1]}`;
+		fs.writeFile(imgSrc, imageFile.data, async (err, file) => {
+			if(err) {
+				throw err;
+			} else {
+				imgSrc = imgSrc.replace('public', '');
+				userProfileCard.coverImgUrl = imgSrc;
+				await userProfileCard.save();
+				res.status(200).json({
+					fileWritten: true
+				})
+			}
+		});
+	} catch(err) {
+		res.status(500).json({
+			fileWritten: false,
+			error: "Failed to save user cover image! possible reasons: Wrong Email OR File Write Failed."
+		});
+	}
+}
+
+// for redux store
+module.exports.userProfileData = async function(req, res) {
+	let { email = '' } = req.body;
+	try {
+		if (!email) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('-_id -__v').lean();
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		res.status(200).json({
+			data: { ...usrProfileCard }
+		});
+
+	} catch(err) {
+		res.status(500).json({
+			data: null,
+			error: "Failed to get data! possible reasons: invalid/empty email | User Profile Card Not Found..."
 		});
 	}
 }
 
 module.exports.storeLink = async function(req, res) {
-	let { email = '', linkType = '', linkAdress = '' } = req.body;
-	linkType = linkType.toLowerCase();
+	let { email = '',
+			linkName = '',
+			linkType = '',
+			linkValue = '',
+			isBusiness = false
+		} = req.body;
 	try {
-		if (!email || !linkType || !linkAdress) {
+		if (!email || !linkType || !linkValue) {
 			throw new Error();
 		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} activeList premium`);
+		if (!linkName) {
+			linkName = linkType;
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('links premium').exec();
 		if (!usrProfileCard) {
 			throw new Error();
 		}
-		if (!usrProfileCard.premium && usrProfileCard[linkType].length > 0) {
-			return res.status(402).json({
+		if (!usrProfileCard.premium && isBusiness) {
+			res.status(500).json({
 				linkAdded: false,
-				error: "Buy premium to add more links!"
-			});
-		}
-		usrProfileCard[linkType].push(linkAdress);
-		// let index = usrProfileCard.activeList.findIndex(el => el.linkName === linkType);
-		if(usrProfileCard.activeList.findIndex(el => el.linkName === linkType) === -1) {
-			usrProfileCard.activeList.push({
-				linkName: linkType,
-				showLink: true
+				links: null,
+				error: "Buy Premium to use Business Links functionality!"
 			})
 		}
-		await usrProfileCard.save();
-		return res.status(200).json({
-			linkAdded: true
-		});
-	} catch(err) {
-		res.status(500).json({
-			linkAdded: false,
-			error: "Failed to add link. possible reasons: invalid/empty email, linkType, linkAdded OR No such user found."
-		});
-	}
-}
-
-module.exports.fetchOneTypeLinks = async function(req, res) {
-	let { email = '', linkType = '' } = req.body;
-	linkType = linkType.toLowerCase();
-	try {
-		if (!email || !linkType) {
-			throw new Error();
-		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} premium`);
-		if (!usrProfileCard) {
-			throw new Error();
-		}
-		if(usrProfileCard[linkType].length === 0) {
-			return res.status(200).json({
-				hasLinks: false,
-				linkType,
-				links: []
-			});
-		} else {
-			return res.status(200).json({
-				hasLinks: true,
-				linkType,
-				links: usrProfileCard[linkType]
-			});
-		}
-	} catch(err) {
-		res.status(500).json({
-			hasLinks: false,
+		usrProfileCard.links.push({
+			linkName,
 			linkType,
-			links: [],
-			error: "Failed to fetch link. possible reasons: invalid/empty email, linkType OR No user/links found."
+			linkValue,
+			isBusiness
 		});
-	}
-}
-
-module.exports.fetchAllLinks = async function(req, res) {
-	let { email = '' } = req.body;
-	try {
-		if (!email) {
-			throw new Error();
-		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} premium`);
-		if (!usrProfileCard) {
-			throw new Error();
-		}
-
-		// for()
-	} catch(err) {
-		res.status(500).json({
-			hasLinks: false,
-			links: [],
-			error: "Failed to fetch links. possible reasons: invalid/empty email OR No user in database found."
-		});
-	}
-}
-
-module.exports.activeLinksList = async function(req, res) {
-	let { email = '' } = req.body;
-	try {
-		if (!email) {
-			throw new Error();
-		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select('activeList');
-		if (!usrProfileCard) {
-			throw new Error();
-		}
-		let linksAdded = [];
-		for(let activeListVal of usrProfileCard.activeList) {
-			linksAdded.push({
-				showLink: activeListVal.showLink,
-				linkName: activeListVal.linkName
-			});
-			// if (activeListVal.showLink) {
-			// 	linksVisible.push({
-			// 		showLink: activeListVal.showLink,
-			// 		linkName: activeListVal.linkName
-			// 	});
-			// } else {
-			// 	linksNotVisible.push({
-			// 		showLink: activeListVal.showLink,
-			// 		linkName: activeListVal.linkName
-			// 	});
-			// }
-		}
-		return res.status(200).json({linksAdded});
-
-	} catch(err) {
-		res.status(500).json({
-			error: "Failed to fetch active links. possible reasons: invalid/empty email OR No user in database found."
-		});
-	}
-}
-
-module.exports.updateActiveLink = async function(req, res) {
-	let { email = '', linkType = '', showLink = false } = req.body;
-	try {
-		if (!email || !linkType) {
-			throw new Error();
-		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select('activeList');
-		if (!usrProfileCard) {
-			throw new Error();
-		}
-		let index = usrProfileCard.activeList.findIndex(el => el.linkName === linkType);
-		if(index === -1) {
-			throw new Error();
-		} else {
-			if(usrProfileCard.activeList[index].showLink !== showLink) {
-				usrProfileCard.activeList[index].showLink = showLink;
-				await usrProfileCard.save();
-			}
-		}
-		return res.status(200).json({
-			changedLinkData: usrProfileCard.activeList[index]
-		});
-
-	} catch(err) {
-		res.status(500).json({
-			changedLinkData: null,
-			error: "Failed to fetch active links. possible reasons: invalid/empty email, linkType OR No user in database found."
-		});
-	}
-}
-
-
-module.exports.deleteLink = async function(req, res) {
-	let { email = '', linkType = '' } = req.body;
-	try {
-		if (!email || !linkType) {
-			throw new Error();
-		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} activeList`);
-		if (!usrProfileCard) {
-			throw new Error();
-		}
-		usrProfileCard[linkType] = [];
-		usrProfileCard.activeList = usrProfileCard.activeList.filter(upd => upd.linkName !== linkType);
 		await usrProfileCard.save();
-		res.json({
-			linkDeleted: true,
-			deletedLinkType: linkType,
+		res.status(200).json({
+			linkAdded: true,
+			links: usrProfileCard.links
 		})
 
 	} catch(err) {
-		console.log(err);
 		res.status(500).json({
-			linkDeleted: false,
-			deletedLinkType: linkType,
-			error: "Failed to delete link. possible reasons: invalid/empty email, linkType OR No user in database found."
-		});
+			linkAdded: false,
+			links: null,
+			error: "Failed to save new link! possible reasons: Invalid email OR empty linkType/linkValue..."
+		})
 	}
 }
 
 module.exports.updateLink = async function(req, res) {
-	let { email = '', linkType = '', linksArray = [] } = req.body;
+	let {
+			email = '',
+			linkName = '',
+			linkValue = '',
+			linkId = '',
+			isBusiness = false
+		} = req.body;
+
 	try {
-		if(!email || !linkType || !linksArray.length || !Array.isArray(linksArray)) {
+		if (!email || !linkId) {
 			throw new Error();
 		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select(`${linkType} premium`);
-		if(!usrProfileCard) {
+
+		const usrProfileCard = await ProfileCard.findOne({ email, "links._id": linkId }).select('links premium').exec();
+		if (!usrProfileCard) {
 			throw new Error();
 		}
-		if(!usrProfileCard.premium && linksArray.length > 1) {
-			return res.json({
+
+		if (!usrProfileCard.premium && isBusiness) {
+			res.status(500).json({
 				linkUpdated: false,
-				updatedLinkType: linkType,
-				error: "Not Premium User! Only one link in array allowed..."
-			});
-		}
-		if(usrProfileCard[linkType].length === 0) {
-			return res.json({
-				linkUpdated: false,
-				updatedLinkType: linkType,
-				error: "This Link is not added by user..."
-			});
+				links: null,
+				error: "Buy Premium to use Business Links functionality!"
+			})
 		}
 
-		usrProfileCard[linkType] = linksArray;
-		await usrProfileCard.save();
+		let currElLink = usrProfileCard.links.id(linkId), businessChanged = false;
 
-		res.json({
+		if(currElLink.linkValue === linkValue) {
+			linkValue = '';
+		}
+		if(currElLink.linkName === linkName) {
+			linkName = '';
+		}
+
+		if(currElLink.isBusiness !== isBusiness) {
+			currElLink.isBusiness = isBusiness;
+			businessChanged = !businessChanged;
+		}
+		if(!!linkName) {
+			currElLink.linkName = linkName;
+		}
+		if(!!linkValue) {
+			currElLink.linkValue = linkValue;
+		}
+		if(linkName || linkValue || businessChanged) {
+			await usrProfileCard.save();
+		}
+		res.status(200).json({
 			linkUpdated: true,
-			updatedLinkType: linkType,
-		});
+			links: usrProfileCard.links
+		})
 
 	} catch(err) {
-		console.log(err);
 		res.status(500).json({
 			linkUpdated: false,
-			updatedLinkType: linkType,
-			error: "Failed to update link. possible reasons: invalid/empty email, linkType, linksArray OR No user in database found."
+			links: null,
+			error: "Failed to save new link! possible reasons: Invalid email OR empty linkType/linkValue..."
 		});
 	}
 }
 
-module.exports.userDetails = async function(req, res) {
-	let { email = '' } = req.body;
+
+module.exports.updateEditProfile = async function(req, res) {
+	let {
+			email = '',
+			name = '',
+			location = '',
+			bio = '',
+			businessClient = false,
+			theme = ''
+		} = req.body;
 
 	try {
 		if (!email) {
 			throw new Error();
 		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select('imgSrc name');
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('email name location bio businessClient theme premium');
 		if (!usrProfileCard) {
 			throw new Error();
 		}
-		let { name, imgSrc } = usrProfileCard;
-		res.json({
-			userDetails: {
-				name: usrProfileCard.name,
-				imageUrl: `${!imgSrc ? '' : req.get('host')}${imgSrc.replace('public', '')}`
+		if (!usrProfileCard.premium && businessClient) {
+			res.status(500).json({
+				profileUpdated: false,
+				data: null,
+				error: "Buy Premium to use Business Links functionality!"
+			})
+		}
+		let businessChanged = false;
+		if(usrProfileCard.name === name) { name = ''; }
+		if(usrProfileCard.location === location) { location = ''; }
+		if(usrProfileCard.bio === bio) { bio = ''; }
+		if(usrProfileCard.theme === theme) { theme = ''; }
+
+		if(usrProfileCard.businessClient !== businessClient) {
+			usrProfileCard.businessClient = businessClient;
+			businessChanged = true;
+		}
+
+		if(!!name) { usrProfileCard.name = name; }
+		if(!!location) { usrProfileCard.location = location; }
+		if(!!bio) { usrProfileCard.bio = bio; }
+		if(!!theme) { usrProfileCard.theme = theme; }
+
+		if(name || location || bio || theme || businessChanged) {
+			await usrProfileCard.save();
+			console.log('testing...');
+		}
+
+		res.status(200).json({
+			profileUpdated: true,
+			data: {
+				name,
+				location,
+				bio,
+				theme,
+				businessChanged
 			}
-		})
+		});
+
 	} catch(err) {
 		res.status(500).json({
-			userDetails: null,
-			error: "No Data Found! possible errors: wrong email OR no such user in database..."
-		})
+			profileUpdated: false,
+			data: null,
+			error: "Failed to save Edit Details! possible reasons: Invalid email OR No user found..."
+		});
+	}
+}
+
+
+module.exports.toggleProfileVisibility = async function(req, res) {
+	let { toggleVisibility = false } = req.body;
+	try {
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('private');
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		if(usrProfileCard.private !== toggleVisibility) {
+			usrProfileCard.private = toggleVisibility;
+			await usrProfileCard.save();
+		}
+		res.status(200).json({
+			private: toggleVisibility
+		});
+
+	} catch(err) {
+		res.status(500).json({
+			private: false,
+			error: "Failed to Update Profile Visibility! possible reasons: Invalid email OR no user found..."
+		});
 	}
 }

@@ -1,16 +1,29 @@
 const { Schema, model } = require('mongoose');
 
+const linksSchema = new Schema({
+  linkName: { type: String },
+  linkType: { type: String },
+  linkValue: { type: String },
+  visibleOnProfile: { type: Boolean, default: true },
+  isBusiness: { type: Boolean, default: false },
+  clickCount: { type: Number, default: 0 }
+});
+
 const profileCardSchema = new Schema({
   name: {
-    type: String
+    type: String,
+    required: true
   },
   email: {
     type: String,
-    unique: true
+    unique: true,
+    required: true
   },
-  imgSrc: {
-    type: String,
-    default: ""
+  profileImgUrl: {
+    type: String
+  },
+  coverImgUrl: {
+    type: String
   },
   shortUserId: {
     type: String,
@@ -20,154 +33,34 @@ const profileCardSchema = new Schema({
     type: Boolean,
     default: false
   },
-  activeList: [{
-    linkName: { type: String },
-    showLink: { type: Boolean }
-  }],
-
-  // links need to de added
-  linkedin: [{
-  	type: String
-  }],
-  facebook: [{
-    type: String
-  }],
-  number: [{
-    type: String
-  }],
-  email_link: [{
-    type: String
-  }],
-  instagram: [{
-    type: String
-  }],
-  website: [{
-    type: String
-  }],
-  linkedin: [{
-    type: String
-  }],
-  whatsapp: [{
-    type: String
-  }],
-  call: [{
-    type: String
-  }],
-  wechat: [{
-    type: String
-  }],
-  facetimer: [{
-    type: String
-  }],
-  address: [{
-    type: String
-  }],
-  snapchat: [{
-    type: String
-  }],
-  tiktok: [{
-    type: String
-  }],
-  twitter: [{
-    type: String
-  }],
-  youtube: [{
-    type: String
-  }],
-  clubhouse: [{
-    type: String
-  }],
-  twitch: [{
-    type: String
-  }],
-  pinterest: [{
-    type: String
-  }],
-  website: [{
-    type: String
-  }],
-  calendy: [{
-    type: String
-  }],
-  reviews: [{
-    type: String
-  }],
-  etsy: [{
-    type: String
-  }],
-  applink: [{
-    type: String
-  }],
-  booksy: [{
-    type: String
-  }],
-  square: [{
-    type: String
-  }],
-  yelp: [{
-    type: String
-  }],
-  cashapp: [{
-    type: String
-  }],
-  venmo: [{
-    type: String
-  }],
-  zelle: [{
-    type: String
-  }],
-  paypal: [{
-    type: String
-  }],
-  customlink: [{
-    type: String
-  }],
-  linktree: [{
-    type: String
-  }],
-  discord: [{
-    type: String
-  }],
-  onlyfans: [{
-    type: String
-  }],
-  opensea: [{
-    type: String
-  }],
-  podacasts: [{
-    type: String
-  }],
-  hoobe: [{
-    type: String
-  }],
-  spotify: [{
-    type: String
-  }],
-  applemusic: [{
-    type: String
-  }],
-  soundcloud: [{
-    type: String
-  }],
+  businessClient: {
+    type: Boolean,
+    default: false
+  },
+  private: {
+    type: Boolean,
+    default: false
+  },
+  leadCapture: {
+    type: Boolean,
+    default: false
+  },
+  theme: {
+    type: String,
+    default: '#3e4e55' //#09898f
+  },
+  location: {
+    type: String,
+    default: ""
+  },
+  bio: {
+    type: String,
+    default: ""
+  },
+  links: {
+    type: [linksSchema]
+  }
 });
-
-// console.log(Object.keys(profileCardSchema.tree))
 
 const ProfileCard = model('profilecard', profileCardSchema);
 module.exports = ProfileCard;
-
-// [
-//   'linkedin',    'facebook',   'number',
-//   'instagram',   'website',    'whatsapp',
-//   'call',        'wechat',     'facetimer',
-//   'address',     'snapchat',   'tiktok',
-//   'twitter',     'youtube',    'clubhouse',
-//   'twitch',      'pinterest',  'calendy',
-//   'reviews',     'etsy',       'applink',
-//   'booksy',      'square',     'yelp',
-//   'cashapp',     'venmo',      'zelle',
-//   'paypal',      'customlink', 'linktree',
-//   'discord',     'onlyfans',   'opensea',
-//   'podacasts',   'hoobe',      'spotify',
-//   'applemusic',  'soundcloud', 'email_link'
-// ]

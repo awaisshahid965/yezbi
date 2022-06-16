@@ -1,0 +1,24 @@
+https://www.youtube.com/watch?v=-yXJI0xvUPA (POPL PRO)
+
+PRO
+
+
+	-- upgrade to pro
+		- Customized titles
+		- Switch Links from Business to Social & vice versa
+		- Customized icons (minus)
+
+
+
+	-- Not to do on profile page
+		1) lead capture (add connection by showing form on nfc share)
+		2) direct link (auto redirect to user selected link on load) (minus)
+
+	-- things we aren't doing
+		1) location
+		2) address
+		3) Personal Bio
+		4) Personal to Business (pro)
+		5) Profile themes (pro)
+		6) turn profile public/private (pro)
+		7) watch which link clicked most (pro)

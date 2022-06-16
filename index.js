@@ -35,20 +35,22 @@ app.get('/', (req, res) => {
 app.get('/:sid/share', async (req, res) => {
 	let { sid } = req.params;
 	try {
-		const usrProfileCard = await ProfileCard.findOne({ shortUserId: sid }).select('name email activeList');
-		let linksVisible = [];
-		for(let activeListVal of usrProfileCard.activeList) {
-			if (activeListVal.showLink) {
-				linksVisible.push({
-					showLink: activeListVal.showLink,
-					linkName: activeListVal.linkName
-				});
-			}
-		}
+		const usrProfileCard = await ProfileCard.findOne({ shortUserId: sid }).select('name email coverImgUrl profileImgUrl theme');
+		// let linksVisible = [];
+		// for(let activeListVal of usrProfileCard.activeList) {
+		// 	if (activeListVal.showLink) {
+		// 		linksVisible.push({
+		// 			showLink: activeListVal.showLink,
+		// 			linkName: activeListVal.linkName
+		// 		});
+		// 	}
+		// }
 		res.render('profile-card', {
-			linksVisible,
 			name: usrProfileCard.name,
-			email: usrProfileCard.email
+			email: usrProfileCard.email,
+			profileImgUrl: usrProfileCard.profileImgUrl,
+			coverImgUrl: usrProfileCard.coverImgUrl,
+			theme: usrProfileCard.theme
 		});
 	} catch(err) {}
 });

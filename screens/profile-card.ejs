@@ -5,15 +5,24 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>User Detail Card</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/css/style.test.css">
+	<style type="text/css">
+		:root {
+			--cl-banner: <%= theme %>;
+			--cl-banner--light: <%= theme %>99;
+		}
+	</style>
 </head>
 <body>
 
 	<main class="container">
-		<div class="admin_banner"></div>
+		<div class="admin_banner">
+			<!-- <img class="imgTest" src="https://i0.wp.com/www.entertainmentmesh.com/wp-content/uploads/2015/10/cool-cat-fb-cover.jpg?ssl=1" alt=""> -->
+			<img class="admin_cover" src="<%= coverImgUrl %>" alt="<%= coverImgUrl %>">
+		</div>
 		<div class="admin_card--wrapper">
 			<div class="admin_card">
-				<img class="admin_card--img" src="http://test.beinnovative.in/assets/front/img/user/vcard/61d73ebe6859c.png" alt="card cover pic">
+				<img class="admin_card--img" src="<%= profileImgUrl %>" alt="<%= profileImgUrl %>">
 				<h1 class="admin_name">
 					<%= name %>
 				</h1>
