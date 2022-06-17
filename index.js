@@ -22,6 +22,7 @@ app.use(fileUpload());
 app.set('view engine', 'ejs');
 app.set('views', 'screens');
 
+
 // initializing database
 connectToDatabase(app);
 
@@ -32,6 +33,16 @@ app.get('/', (req, res) => {
 	})
 });
 
+/*
+	** orange: #e68e2
+	** red:    #e64e28
+	** blue:   #2b84b2
+	** purple: #432bb2, #6356a0
+	** pink:   #c64b76
+	** in-red: #c64b4b
+	** brown:  #a79245
+	** green:  #42957a
+*/
 app.get('/:sid/share', async (req, res) => {
 	let { sid } = req.params;
 	try {

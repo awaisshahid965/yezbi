@@ -276,7 +276,7 @@ module.exports.updateLink = async function(req, res) {
 }
 
 
-module.exports.updateEditProfile = async function(req, res) {
+module.exports.updateEditProfileObselete = async function(req, res) {
 	let {
 			email = '',
 			name = '',
@@ -417,6 +417,158 @@ module.exports.deleteLink = async function(req, res) {
 			linkDeleted: false,
 			links: null,
 			error: "Failed to Delete Link! possible reasons: Invalid email/link-id OR no user found..."
+		});
+	}
+}
+
+module.exports.updateEditProfile = async function(req, res) {
+	let {
+			email,
+			name,
+			location,
+			bio,
+			businessClient,
+			theme,
+		} = req.body;
+		console.log(req.body)
+		console.log(name, email, location, bio, businessClient, theme, 13)
+
+		let {
+			profileImage = null,
+			coverImage = null
+		} = req.files || {};
+
+		businessClient = (businessClient === 'false' || !businessClient) ? false : true;
+		console.log(businessClient, 12);
+
+	try {
+		if (!email) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('-links');
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		// business client is only available in premium
+		if (!usrProfileCard.premium && businessClient) {
+			return res.status(500).json({
+				profileUpdated: false,
+				data: null,
+				error: "Buy Premium to use Business Links functionality!"
+			});
+		}
+		if (!usrProfileCard.premium && !!theme) {
+			return res.status(500).json({
+				profileUpdated: false,
+				data: null,
+				error: "Buy Premium to use Themes functionality!"
+			});
+		}
+
+		/*
+			** images data checks to see if files received or not
+			** if received, delete old one and replace with new file
+			** reason this placed above "textual data checks" is
+			** if file handeling throws some error, we have less
+			** checks to deal with
+		*/
+
+		// first we have mimetypes checks so no one upload file other than in format list
+
+		if(!!profileImage) {
+			if (!imageFormats.includes(profileImage.mimetype.split('/')[1].toLowerCase())) {
+				throw new Error();
+			}
+		}
+		if(!!coverImage) {
+			if (!imageFormats.includes(coverImage.mimetype.split('/')[1].toLowerCase())) {
+				throw new Error();
+			}
+		}
+
+		if(!!profileImage) {
+			// delete already uploaded image
+			if (usrProfileCard.profileImgUrl !== '' && !usrProfileCard.profileImgUrl.includes('default-_-_-')) {
+				fs.unlink('public' +usrProfileCard.profileImgUrl, (err) => {
+					if(err) {
+						throw err;
+					}
+				});
+			}
+			// save new image
+			let imgSrc = `public/profile-images/IMG-${email.split('@')[0]}-${(new ShortUniqueId({ length: 10 }))()}.${profileImage.mimetype.split('/')[1]}`;
+			fs.writeFileSync(imgSrc, profileImage.data);
+			imgSrc = imgSrc.replace('public', '');
+			usrProfileCard.profileImgUrl = imgSrc;
+			console.log(imgSrc)
+		}
+
+		if(!!coverImage) {
+			// delete already uploaded image
+			if (usrProfileCard.coverImgUrl !== '' && !usrProfileCard.coverImgUrl.includes('cover-_-_-')) {
+				fs.unlink('public' +usrProfileCard.coverImgUrl, (err) => {
+					if(err) {
+						throw err;
+					}
+				});
+			}
+			// save new image
+			let imgSrc = `public/cover-images/IMG-${email.split('@')[0]}-${(new ShortUniqueId({ length: 10 }))()}.${coverImage.mimetype.split('/')[1]}`;
+			fs.writeFileSync(imgSrc, coverImage.data);
+			imgSrc = imgSrc.replace('public', '');
+			usrProfileCard.coverImgUrl = imgSrc;
+			console.log(imgSrc);
+		}
+
+		/*
+			** textual data checks
+			** reason of all conditions written below
+			** to only change field in database if field has
+			** received a value plus that does not match
+			** with already saved value
+		*/
+		let businessChanged = false;
+		if(usrProfileCard.name === name) { name = ''; }
+		if(usrProfileCard.location === location) { location = ''; }
+		if(usrProfileCard.bio === bio) { bio = ''; }
+		if(usrProfileCard.theme === theme) { theme = ''; }
+
+		if(usrProfileCard.businessClient !== businessClient) {
+			usrProfileCard.businessClient = businessClient;
+			businessChanged = true;
+		}
+
+		if(!!name) { usrProfileCard.name = name; }
+		if(!!location) { usrProfileCard.location = location; }
+		if(!!bio) { usrProfileCard.bio = bio; }
+		if(!!theme) { usrProfileCard.theme = theme; }
+		/*
+			** textual data checks end
+		*/
+
+		if(name || location || bio || theme || businessChanged || profileImage || coverImage) {
+			await usrProfileCard.save();
+		}
+
+		res.status(200).json({
+			profileUpdated: true,
+			data: {
+				name,
+				location,
+				bio,
+				theme,
+				businessChanged,
+				profileImgUrl: usrProfileCard.profileImgUrl,
+				coverImgUrl: usrProfileCard.coverImgUrl
+			}
+		});
+
+	} catch(err) {
+		console.log('a', err)
+		res.status(500).json({
+			profileUpdated: false,
+			data: null,
+			error: "Failed to save Edit Details! possible reasons: Invalid email OR No user found OR error during file handling (Wrong mimetype OR Save operation failed. allowed mimetype "+ imageFormats.join(', ') +")."
 		});
 	}
 }
