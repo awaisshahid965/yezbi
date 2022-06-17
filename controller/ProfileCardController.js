@@ -408,11 +408,13 @@ module.exports.deleteLink = async function(req, res) {
 		usrProfileCard.links.id(linkId).remove();
 		await usrProfileCard.save();
 		res.status(200).json({
+			linkDeleted: true,
 			links: usrProfileCard.links
 		});
 
 	} catch(err) {
 		res.status(500).json({
+			linkDeleted: false,
 			links: null,
 			error: "Failed to Delete Link! possible reasons: Invalid email/link-id OR no user found..."
 		});
