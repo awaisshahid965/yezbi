@@ -7,7 +7,9 @@ const {
 	storeLink,
 	updateLink,
 	updateEditProfile,
-	toggleProfileVisibility
+	toggleProfileVisibility,
+	toggleLinkVisibility,
+	deleteLink
 } = require('../../controller/ProfileCardController');
 
 
@@ -28,6 +30,10 @@ profileAuthRoute.post('/update/profile', updateEditProfile);
 
 
 profileAuthRoute.post('/toggle/profile-visibility', toggleProfileVisibility);
+profileAuthRoute.post('/toggle/link-visibility', toggleLinkVisibility);
+
+
+profileAuthRoute.post('/toggle/delete-link', deleteLink);
 
 
 module.exports = profileAuthRoute;

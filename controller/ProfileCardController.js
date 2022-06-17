@@ -344,8 +344,11 @@ module.exports.updateEditProfile = async function(req, res) {
 
 
 module.exports.toggleProfileVisibility = async function(req, res) {
-	let { toggleVisibility = false } = req.body;
+	let { toggleVisibility = false, email = '' } = req.body;
 	try {
+		if (!email) {
+			throw new Error();
+		}
 		const usrProfileCard = await ProfileCard.findOne({ email }).select('private');
 		if (!usrProfileCard) {
 			throw new Error();
@@ -362,6 +365,56 @@ module.exports.toggleProfileVisibility = async function(req, res) {
 		res.status(500).json({
 			private: false,
 			error: "Failed to Update Profile Visibility! possible reasons: Invalid email OR no user found..."
+		});
+	}
+}
+
+module.exports.toggleLinkVisibility = async function(req, res) {
+	let { toggleVisibility = false, linkId = '', email = '' } = req.body;
+	try {
+		if (!email || !linkId) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('links');
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		if(usrProfileCard.links.id(linkId).visibleOnProfile !== toggleVisibility) {
+			usrProfileCard.links.id(linkId).visibleOnProfile = toggleVisibility;
+			await usrProfileCard.save();
+		}
+		res.status(200).json({
+			links: usrProfileCard.links
+		});
+
+	} catch(err) {
+		res.status(500).json({
+			links: null,
+			error: "Failed to Update Link Visibility! possible reasons: Invalid email OR no user found..."
+		});
+	}
+}
+
+module.exports.deleteLink = async function(req, res) {
+	let { linkId = '', email = '' } = req.body;
+	try {
+		if (!email || !linkId) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('links');
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		usrProfileCard.links.id(linkId).remove();
+		await usrProfileCard.save();
+		res.status(200).json({
+			links: usrProfileCard.links
+		});
+
+	} catch(err) {
+		res.status(500).json({
+			links: null,
+			error: "Failed to Delete Link! possible reasons: Invalid email/link-id OR no user found..."
 		});
 	}
 }

@@ -29,7 +29,7 @@
 
 
 4): Load Redux Store
-	-- path: "/api/create/profile-card"
+	-- path: "/api/get/data/all"
 	-- Request Variables: { email(String) }
 	-- Required: { email }
 	-- Request type: application/json
@@ -50,13 +50,13 @@
 	-- Required: { email, linkType, linkValue }
 	-- Request type: application/json
 	-- method: POST
-	-- Response: linkAdded -> true/false, error (if false)
+	-- Response: linkAdded -> true/false, links-> Array, error (if false)
 
 
 
 6): Update Single Link
 	-- path: "/api/update/link"
-	-- Request Variables: { email, linkName, linkType, linkValue, isBusiness }
+	-- Request Variables: { email, linkId, linkName, linkValue, isBusiness }
 	-- Details: {
 		email(String): to identify profile,
 		linkId(String): to find link from links array,
@@ -67,7 +67,7 @@
 	-- Required: { email, linkId }
 	-- Request type: application/json
 	-- method: POST
-	-- Response: linkUpdated -> true/false, error (if false)
+	-- Response: linkUpdated -> true/false, links-> Array, error (if false)
 
 
 7): Update Profile Data
@@ -96,3 +96,31 @@
 	-- Response: private -> true/false, error('if email not found')
 
 
+
+9): Change profile-card single link visibility 
+	--path: "/api/toggle/link-visibility"
+	-- Request Variables: { email, linkId(String), toggleVisibility(Boolean) }
+	-- Required: { email, linkId }
+	-- Request type: application/json
+	-- method: POST
+	-- Response: links -> Object/null, error(if null)
+
+
+
+10): Delete single link
+	--path: "/api/toggle/delete-link"
+	-- Request Variables: { email, linkId(String), toggleVisibility(Boolean) }
+	-- Required: { email, linkId }
+	-- Request type: application/json
+	-- method: POST
+	-- Response: links -> links/null, error(if null)
+
+
+
+
+
+/** remaining tasks
+
+	** Delete Route (done)
+	** switch link on/off Route (done)
+	** Payment Successful Route
