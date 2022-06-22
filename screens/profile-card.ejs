@@ -8,8 +8,8 @@
 	<link rel="stylesheet" type="text/css" href="/css/style.test.css">
 	<style type="text/css">
 		:root {
-			--cl-banner: <%= theme %>;
-			--cl-banner--light: <%= theme %>99;
+			--cl-theme: <%= theme %>;
+			--cl-theme--light: <%= theme %>99;
 		}
 	</style>
 </head>
@@ -47,17 +47,20 @@
 					</div>
 				</div>
 				<div class="admin_btns">
-					<a href="#" class="btn btn-primary">
+					<!-- <a href="#" class="btn btn-primary">
 						<i class="fa-solid fa-plus"></i> Add to Contact
 					</a>
 					<a href="#" class="btn btn-primary">
 						<i class="fa-solid fa-share-from-square"></i> Share vCard
-					</a>
+					</a> -->
+					<button id="open-popup" class="btn btn-primary">
+						Exchange Contacts
+					</button>
 				</div>
 			</div>
 		</div>
 		<div class="info">
-			<div class="info_card">
+			<!-- <div class="info_card">
 				<a href="#" class="info_icon">	
 					<i class="fa-solid fa-mobile-screen-button"></i>
 				</a>
@@ -65,9 +68,9 @@
 					<p class="info_title">Phone</p>
 					<a href="#" class="info_link">+919748821276</a>
 				</div>
-			</div>
+			</div> -->
 
-			<div class="info_card">
+			<!-- <div class="info_card">
 				<a href="mailto:<%= email %>" class="info_icon">	
 					<i class="fa-solid fa-at"></i>
 				</a>
@@ -76,19 +79,117 @@
 					<a href="mailto:<%= email %>" class="info_link">
 					<%= email %></a>
 				</div>
-			</div>
+			</div> -->
 
-			<div class="info_card">
-				<a href="#" class="info_icon">	
-					<i class="fa-solid fa-location-dot"></i>
-				</a>
-				<div class="info_detail">
-					<p class="info_title">Address</p>
-					<a href="#" class="info_link">72 Mitra Para Road</a>
+			<% if(!!location){ %>
+				<div class="info_card">
+					<a href="#" class="info_icon">	
+						<i class="fa-solid fa-location-dot"></i>
+					</a>
+					<div class="info_detail">
+						<p class="info_title">Address</p>
+						<p class="info_link"><%= location %></p>
+					</div>
 				</div>
-			</div>
+			<% } %>  
 		</div>
 	</main>
+
+	<div class="popup">
+		<div class="popup_wrapper">
+			<form action="/api/connection/add" method="POST" class="popup_form">
+				<button class="close">&times;</button>
+				<h2>Share your info with <%= name %></h2>
+				<input type="hidden" name="id" value="<%= _id %>" />
+				<div class="form-fields">
+					<div class="form-check">
+						<input type="checkbox" name="existing_user" id="exist" />
+						<label for="exist">Already Using Yuzbi</label>
+					</div>
+					<div class="form-row" id="email_row">
+						<input type="email" name="email" required placeholder=" " />
+						<label>
+							<span>Email</span>
+						</label>
+					</div>
+					<div class="form-row">
+						<input type="text" id="name" name="name" required pattern="[\w ]+" placeholder=" " />
+						<label>
+							<span>Name</span>
+						</label>
+					</div>
+					<div class="form-row">
+						<input type="text" id="number" name="number" required pattern="[0-9+]+" placeholder=" " />
+						<label>
+							<span>Number</span>
+						</label>
+					</div>
+					<div class="form-row">
+						<input type="text" name="jobTitle" pattern="[\w ]+" placeholder=" " />
+						<label>
+							<span>Job Title</span>
+						</label>
+					</div>
+					<div class="form-row">
+						<input type="text" name="company" pattern="[\w ]+" placeholder=" " />
+						<label>
+							<span>Company</span>
+						</label>
+					</div>
+					<div class="form-row">
+						<input type="text" name="note" pattern="[\w ]+" placeholder=" " />
+						<label>
+							<span>Note</span>
+						</label>
+					</div>
+				</div>
+				<div class="btn-row">
+					<button class="btn btn-theme" type="submit">Connect</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		const yuzbiUserCheckbox = document.querySelector('#exist');
+		const allFieldsExceptEmail = document.querySelectorAll('.popup_form .form-row:not(#email_row)');
+
+		yuzbiUserCheckbox.addEventListener('change', e => {
+			let checkVal = e.target.checked;
+			allFieldsExceptEmail.forEach(el => {
+				el.classList.toggle('disable');
+			});
+
+			if(checkVal) {
+				document.querySelector('#number').removeAttribute('required', '');
+				document.querySelector('#name').removeAttribute('required', '');
+			} else {
+				document.querySelector('#number').setAttribute('required', '');
+				document.querySelector('#name').setAttribute('required', '');
+			}
+		});
+
+		document.querySelector('.popup_form .close').addEventListener('click', () => {
+			document.querySelector('.popup').classList.remove('active');
+		});
+
+		onload = () => {
+			setTimeout(() => {
+				document.querySelector('.popup').classList.add('active');
+			}, 2000);
+		}
+
+		document.querySelector('.popup_form').addEventListener('submit', e => {
+			document.querySelector('.popup').classList.remove('active');
+			setTimeout(() => {
+				e.target.reset();
+			}, 500)
+		});
+
+		document.querySelector('#open-popup').addEventListener('click', () => {
+			document.querySelector('.popup').classList.add('active');
+		});
+	</script>
 
 </body>
 </html>

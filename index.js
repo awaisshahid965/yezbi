@@ -46,7 +46,15 @@ app.get('/', (req, res) => {
 app.get('/:sid/share', async (req, res) => {
 	let { sid } = req.params;
 	try {
-		const usrProfileCard = await ProfileCard.findOne({ shortUserId: sid }).select('name email coverImgUrl profileImgUrl theme');
+		const {
+				_id,
+				name,
+				email,
+				coverImgUrl,
+				profileImgUrl,
+				theme,
+				location
+			} = await ProfileCard.findOne({ shortUserId: sid }).select('');
 		// let linksVisible = [];
 		// for(let activeListVal of usrProfileCard.activeList) {
 		// 	if (activeListVal.showLink) {
@@ -57,11 +65,13 @@ app.get('/:sid/share', async (req, res) => {
 		// 	}
 		// }
 		res.render('profile-card', {
-			name: usrProfileCard.name,
-			email: usrProfileCard.email,
-			profileImgUrl: usrProfileCard.profileImgUrl,
-			coverImgUrl: usrProfileCard.coverImgUrl,
-			theme: usrProfileCard.theme
+			_id,
+			name,
+			email,
+			profileImgUrl,
+			coverImgUrl,
+			theme,
+			location
 		});
 	} catch(err) {}
 });

@@ -9,6 +9,17 @@ const linksSchema = new Schema({
   clickCount: { type: Number, default: 0 }
 });
 
+const connectionSchema = new Schema({
+  name: { type: String, default: '' },
+  email: { type: String , default: ''},
+  number: { type: String, default: '' },
+  website: { type: String, default: '' },
+  jobTitle: { type: String, default: '' },
+  company: { type: String },
+  note: { type: String, default: '' },
+  imgUrl: { type: String, default: '' }
+});
+
 const profileCardSchema = new Schema({
   name: {
     type: String,
@@ -59,8 +70,20 @@ const profileCardSchema = new Schema({
   },
   links: {
     type: [linksSchema]
+  },
+  connections: {
+    type: [connectionSchema]
   }
 });
 
 const ProfileCard = model('profilecard', profileCardSchema);
 module.exports = ProfileCard;
+
+
+/*
+name,
+email,
+ph,
+address,
+
+*/

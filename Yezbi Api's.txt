@@ -108,12 +108,25 @@
 
 
 10): Delete single link
-	--path: "/api/toggle/delete-link"
-	-- Request Variables: { email, linkId(String), toggleVisibility(Boolean) }
+	--path: "/api/link/delete"
+	-- Request Variables: { email, linkId(String) }
 	-- Required: { email, linkId }
 	-- Request type: application/json
 	-- method: POST
-	-- Response: links -> links/null, error(if null)
+	-- Response: links -> [Array]/null, error(if null)
+
+
+11): Delete single connection
+	--path: "/api/toggle/delete-link"
+	-- Request Variables: { email, connectionId(String) }
+	-- Required: { email, connectionId }
+	-- Request type: application/json
+	-- method: POST
+	-- Response: connections -> [Array]/null, error(if null)
+
+
+12) Get All Connection:
+	-- No need for any endpoint as these are available in /api/get/data/all
 
 
 
@@ -121,6 +134,14 @@
 
 /** remaining tasks
 
-	** Delete Route (done)
-	** switch link on/off Route (done)
 	** Payment Successful Route
+
+
+
+Dashbord Related Data
+
+1) /api/users
+	~ Required
+		~~ _id, email, name, short-link
+
+
