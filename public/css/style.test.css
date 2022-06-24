@@ -284,6 +284,10 @@ a:visited {
 	}
 }
 
+.popup_wrapper {
+	width: 100%;
+}
+
 .popup_form {
 	max-width: 50rem;
 	margin: 0 auto;

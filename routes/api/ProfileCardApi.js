@@ -34,7 +34,7 @@ profileAuthRoute.post('/toggle/profile-visibility', toggleProfileVisibility);
 profileAuthRoute.post('/toggle/link-visibility', toggleLinkVisibility);
 
 
-profileAuthRoute.post('/toggle/delete-link', deleteLink);
+// profileAuthRoute.post('/toggle/delete-link', deleteLink);
 profileAuthRoute.post('/link/delete', deleteLink);
 
 profileAuthRoute.post('/connection/add', addConnection);

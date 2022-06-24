@@ -1,7 +1,7 @@
 const dashboardRoute = require('express').Router();
 const { allUserData } = require('../../controller/DashboardController');
 
-dashboardRoute.post('/users', allUserData);
+dashboardRoute.post('/user-data/all', allUserData);
 
 
 module.exports = dashboardRoute;

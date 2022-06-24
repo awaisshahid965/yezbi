@@ -27,32 +27,16 @@
 					<%= name %>
 				</h1>
 				<div class="actions">
-					<div class="action_card">
-						<a href="#" class="action_link call">
-							<i class="fa-solid fa-mobile-screen-button"></i>
-						</a>
-						<p class="action_title">Call</p>
-					</div>
-					<div class="action_card">
-						<a href="#" class="action_link whatsapp">
-							<i class="fa-brands fa-whatsapp"></i>
-						</a>
-						<p class="action_title">Whatsapp</p>
-					</div>
-					<div class="action_card">
-						<a href="#" class="action_link mail">
-							<i class="fa-solid fa-envelope"></i>
-						</a>
-						<p class="action_title">Mail</p>
-					</div>
+					<% links.forEach(function(link) { %>
+						<div class="action_card">
+							<a href="<%= linksAppSupports[link.linkType].hrefType %><%= link.linkValue %>" class="action_link whatsapp">
+								<%- linksAppSupports[link.linkType].icon %>
+							</a>
+							<p class="action_title"><%= link.linkName %></p>
+						</div>
+					<% }); %> 
 				</div>
 				<div class="admin_btns">
-					<!-- <a href="#" class="btn btn-primary">
-						<i class="fa-solid fa-plus"></i> Add to Contact
-					</a>
-					<a href="#" class="btn btn-primary">
-						<i class="fa-solid fa-share-from-square"></i> Share vCard
-					</a> -->
 					<button id="open-popup" class="btn btn-primary">
 						Exchange Contacts
 					</button>
@@ -183,6 +167,9 @@
 			document.querySelector('.popup').classList.remove('active');
 			setTimeout(() => {
 				e.target.reset();
+				allFieldsExceptEmail.forEach(el => {
+					el.classList.toggle('disable');
+				});
 			}, 500)
 		});
 

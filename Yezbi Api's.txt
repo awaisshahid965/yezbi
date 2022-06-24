@@ -115,7 +115,7 @@
 	-- method: POST
 	-- Response: links -> [Array]/null, error(if null)
 
-
+// new
 11): Delete single connection
 	--path: "/api/toggle/delete-link"
 	-- Request Variables: { email, connectionId(String) }
@@ -129,7 +129,7 @@
 	-- No need for any endpoint as these are available in /api/get/data/all
 
 
-
+#ae1e75
 
 
 /** remaining tasks

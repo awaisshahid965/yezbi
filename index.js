@@ -4,8 +4,8 @@ const cors = require('cors');
 const fileUpload = require("express-fileupload");
 const { connectToDatabase } = require('./config/database.config');
 const ProfileCard = require('./models/ProfileCard');
-
-
+const middleware = require('./middlewares');
+const linksAppSupports = require('./linksAppSupports');
 // var setups
 const app = express();
 
@@ -16,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static('public'));
 app.use(fileUpload());
+// app.use(middleware.decodeToken);
+// app.use(middleware.matchEmail);
 
 
 // setting view engine
@@ -31,6 +33,22 @@ app.get('/', (req, res) => {
 	res.json({
 		'ServerRunning': 'Okay...'
 	})
+});
+
+app.post('/api/todos', (req, res) => {
+	return res.json({
+		todos: [
+			{
+				title: 'Task1',
+			},
+			{
+				title: 'Task2',
+			},
+			{
+				title: 'Task3',
+			},
+		],
+	});
 });
 
 /*
@@ -53,28 +71,25 @@ app.get('/:sid/share', async (req, res) => {
 				coverImgUrl,
 				profileImgUrl,
 				theme,
-				location
-			} = await ProfileCard.findOne({ shortUserId: sid }).select('');
-		// let linksVisible = [];
-		// for(let activeListVal of usrProfileCard.activeList) {
-		// 	if (activeListVal.showLink) {
-		// 		linksVisible.push({
-		// 			showLink: activeListVal.showLink,
-		// 			linkName: activeListVal.linkName
-		// 		});
-		// 	}
-		// }
+				location,
+				links
+		} = await ProfileCard.findOne({ shortUserId: sid }).select('-connections');
+
+
 		res.render('profile-card', {
+			linksAppSupports,
 			_id,
 			name,
 			email,
 			profileImgUrl,
 			coverImgUrl,
 			theme,
-			location
+			location,
+			links
 		});
 	} catch(err) {}
 });
 
 
 app.use('/api', require('./routes/api/ProfileCardApi'))
+app.use('/api', require('./routes/api/DashboardApi'))
