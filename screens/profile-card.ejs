@@ -17,7 +17,6 @@
 
 	<main class="container">
 		<div class="admin_banner">
-			<!-- <img class="imgTest" src="https://i0.wp.com/www.entertainmentmesh.com/wp-content/uploads/2015/10/cool-cat-fb-cover.jpg?ssl=1" alt=""> -->
 			<img class="admin_cover" src="<%= coverImgUrl %>" alt="<%= coverImgUrl %>">
 		</div>
 		<div class="admin_card--wrapper">
@@ -44,27 +43,6 @@
 			</div>
 		</div>
 		<div class="info">
-			<!-- <div class="info_card">
-				<a href="#" class="info_icon">	
-					<i class="fa-solid fa-mobile-screen-button"></i>
-				</a>
-				<div class="info_detail">
-					<p class="info_title">Phone</p>
-					<a href="#" class="info_link">+919748821276</a>
-				</div>
-			</div> -->
-
-			<!-- <div class="info_card">
-				<a href="mailto:<%= email %>" class="info_icon">	
-					<i class="fa-solid fa-at"></i>
-				</a>
-				<div class="info_detail">
-					<p class="info_title">Email</p>
-					<a href="mailto:<%= email %>" class="info_link">
-					<%= email %></a>
-				</div>
-			</div> -->
-
 			<% if(!!location){ %>
 				<div class="info_card">
 					<a href="#" class="info_icon">	
@@ -81,7 +59,7 @@
 
 	<div class="popup">
 		<div class="popup_wrapper">
-			<form action="/api/connection/add" method="POST" class="popup_form">
+			<form action="/connection/add" method="POST" class="popup_form">
 				<button class="close">&times;</button>
 				<h2>Share your info with <%= name %></h2>
 				<input type="hidden" name="id" value="<%= _id %>" />

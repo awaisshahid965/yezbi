@@ -4,7 +4,7 @@ const cors = require('cors');
 const fileUpload = require("express-fileupload");
 const { connectToDatabase } = require('./config/database.config');
 const ProfileCard = require('./models/ProfileCard');
-const middleware = require('./middlewares');
+const { logRequestPathAndType } = require('./middlewares');
 const linksAppSupports = require('./linksAppSupports');
 // var setups
 const app = express();
@@ -16,9 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static('public'));
 app.use(fileUpload());
-app.use(middleware.decodeToken);
-app.use(middleware.matchEmail);
-app.use(middleware.logRequestPathAndType);
+app.use(logRequestPathAndType);
 
 
 // setting view engine
@@ -92,5 +90,6 @@ app.get('/:sid/share', async (req, res) => {
 });
 
 
-app.use('/api', require('./routes/api/ProfileCardApi'))
-app.use('/api', require('./routes/api/DashboardApi'))
+app.use('/api', require('./routes/api/ProfileCardApi'));
+app.use('/api', require('./routes/api/DashboardApi'));
+app.use(require('./routes/CardWebRoutes'));

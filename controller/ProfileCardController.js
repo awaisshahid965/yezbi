@@ -1,7 +1,6 @@
 const ProfileCard = require('../models/ProfileCard');
 const ShortUniqueId = require('short-unique-id');
 const fs = require('fs');
-const vCardsJS = require('vcards-js');
 
 const imageFormats = ['jpg', 'png', 'jpeg'];
 
@@ -572,29 +571,6 @@ module.exports.updateEditProfile = async function(req, res) {
 			error: "Failed to save Edit Details! possible reasons: Invalid email OR No user found OR error during file handling (Wrong mimetype OR Save operation failed. allowed mimetype "+ imageFormats.join(', ') +")."
 		});
 	}
-}
-
-function makeVcard(name, email, number, img, company, jobTitle, note, website) {
-	let vCard = vCardsJS();
-	let [ fName = '', mName = '', lName = '' ] = name.split(' ');
-	vCard.firstName = fName;
-	vCard.middleName = mName;
-	vCard.lastName = lName;
-	vCard.email = email;
-	!!img && vCard.photo.attachFromUrl(img, img.slice(img.length - 5, img.length).split('.')[1]);
-	!!company && (vCard.organization = company);
-	!!number && (vCard.workPhone = number);
-	!!jobTitle && (vCard.title = jobTitle);
-	!!note && (vCard.note = note);vCard.url
-	!!website && (vCard.url = website);
-
-	// from here, vCard + two headers returned for creating vCard file...
-	const sid = (new ShortUniqueId({ length: 10 }))();
-	return {
-		vCard: vCard.getFormattedString(),
-		contentDisposition: `inline; filename="${sid}.vcf"`,
-		contentType: `text/vcard; name="${sid}.vcf"`
-	};
 }
 
 module.exports.addConnection = async function(req, res) {
