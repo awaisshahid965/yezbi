@@ -11,11 +11,13 @@ module.exports.allUserData = async function(req, res) {
 			throw new Error();
 		}
 		return res.status(200).json({
-			profileCardsList: allUserProfileCards
+			profileCardsList: allUserProfileCards,
+			error: false
 		});
 	} catch(err) {
 		return res.status(500).json({
-			profileCardsList: null
+			profileCardsList: [],
+			error: true
 		});
 	}
 }

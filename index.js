@@ -16,8 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.static('public'));
 app.use(fileUpload());
-// app.use(middleware.decodeToken);
-// app.use(middleware.matchEmail);
+app.use(middleware.decodeToken);
+app.use(middleware.matchEmail);
+app.use(middleware.logRequestPathAndType);
 
 
 // setting view engine

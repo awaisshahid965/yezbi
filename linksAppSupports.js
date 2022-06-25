@@ -9,7 +9,7 @@
 //   '-booksy',      '-square',     'yelp',
 //   '-cashapp',     'venmo',      'zelle',
 //   'paypal',      'customlink', '-linktree',
-//   'discord',     'opensea',	  'email_link'
+//   'discord',     'opensea',	  'email'
 //   'podacasts',   '-hoobe',      'spotify',
 //   'applemusic',  'soundcloud', 
 // ]

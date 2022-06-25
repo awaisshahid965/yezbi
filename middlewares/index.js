@@ -32,6 +32,9 @@ class Middleware {
 				error: "Email does not match with user who sent request!"
 			});
 		}
+	},
+	logRequestPathAndType(req, res, next) {
+		console.log(`${req.method.toUpperCase()}: ${req.path}`);
 	}
 }
 
