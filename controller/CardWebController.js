@@ -1,10 +1,12 @@
 const ProfileCard = require('../models/ProfileCard');
 const vCardsJS = require('vcards-js');
 const ShortUniqueId = require('short-unique-id');
+const linksAppSupports = require('../linksAppSupports');
 
 
 
-
+// this function take some parameters and allow you to make V-Card
+// resueable
 function makeVcard(name, email, number, img, company, jobTitle, note, website) {
 	let vCard = vCardsJS();
 	let [ fName = '', mName = '', lName = '' ] = name.split(' ');
@@ -26,6 +28,44 @@ function makeVcard(name, email, number, img, company, jobTitle, note, website) {
 		contentDisposition: `inline; filename="${sid}.vcf"`,
 		contentType: `text/vcard; name="${sid}.vcf"`
 	};
+}
+
+
+module.exports.getProfileCard = async (req, res) => {
+	let { sid } = req.params;
+	try {
+		const {
+				_id,
+				name,
+				email,
+				coverImgUrl,
+				profileImgUrl,
+				theme,
+				location,
+				links,
+				private,
+				businessClient
+		} = await ProfileCard.findOne({ shortUserId: sid }).select('-connections');
+
+		const linksFiltered = links.filter(businessClient ? l => l.isBusiness && l.visibleOnProfile : l => !l.isBusiness && l.visibleOnProfile);
+		const zerolinks = !linksFiltered.length;
+
+		res.render('profile-card', {
+			linksAppSupports,
+			_id,
+			name,
+			email,
+			profileImgUrl,
+			coverImgUrl,
+			theme,
+			location,
+			links: linksFiltered,
+			zerolinks,
+			private
+		});
+	} catch(err) {
+		console.log(err)
+	}
 }
 
 module.exports.addConnection = async function(req, res) {

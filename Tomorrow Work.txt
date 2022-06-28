@@ -1,0 +1,39 @@
+Tomorrow Work...
+
+1) Meet with Ali (Related GET / issue)
+2) Spam Protection Technique implementation
+	-- Javascript Obfuscator method
+	-- Sessions so bots can't submit through any software like CURl
+	-- Stop same link adding to connections multiple times
+3) Increase LinkCount when user click on any link in Profile Card
+4) Turn Private Mode On/Off Api
+5) Connections Read Api
+
+Things in POPL:
+	1) Won't allow user to submit more than once till page reload.
+	2) Not Using form Tag.
+
+
+
+
+What i did:
+	1) Profile Card Served from backend now supports Private Functionality, that affects
+		- Links not to show when private true
+		- Exchange Contact Form not show when private true
+		- Exchange Contact Form script not loads when private true
+		- Hide Exchange Contact button from View
+
+	2) Connection Read Api Created
+		- Reason: Connections submitted from web form and we have no way to sync that with flutter app other than use web sockets (TCP connection that continuously listen for changes).
+
+	3) Seperation of Business Clients links from Personal Links
+		- toggle b/w two states and if businessClient is `true` then see only business links
+
+	4) Visible Links Functionality added
+		- links with property visibleOnProfile === true will only visible on profile card.
+
+	5) Profile Card Adjusted so if user has no links, it will not show Exchange Contact button.
+
+	6) popup-form is now responsive from 1600px to 280px
+
+	7) cover-image ratio set

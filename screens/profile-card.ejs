@@ -25,21 +25,34 @@
 				<h1 class="admin_name">
 					<%= name %>
 				</h1>
-				<div class="actions">
-					<% links.forEach(function(link) { %>
-						<div class="action_card">
-							<a href="<%= linksAppSupports[link.linkType].hrefType %><%= link.linkValue %>" class="action_link whatsapp">
-								<%- linksAppSupports[link.linkType].icon %>
-							</a>
-							<p class="action_title"><%= link.linkName %></p>
-						</div>
-					<% }); %> 
-				</div>
-				<div class="admin_btns">
-					<button id="open-popup" class="btn btn-primary">
-						Exchange Contacts
-					</button>
-				</div>
+				<% if(!private) { %>
+					<div class="actions">
+						<% links.forEach(function(link) { %>
+							<div class="action_card">
+								<a href="<%= linksAppSupports[link.linkType].hrefType %><%= link.linkValue %>" class="action_link whatsapp">
+									<%- linksAppSupports[link.linkType].icon %>
+								</a>
+								<p class="action_title"><%= link.linkName %></p>
+							</div>
+						<% }); %>
+						<% if(zerolinks) { %>
+							<div class="text-warn">
+								User has not added any link yet!
+							</div>
+						<% } %>
+					</div>
+					<div class="admin_btns">
+						<% if(!zerolinks) { %>
+							<button id="open-popup" class="btn btn-primary">
+								Exchange Contacts
+							</button>
+						<% } %>
+					</div>
+				<% } else { %>
+					<div class="text-warn">
+						User choose to hide identity!
+					</div>
+				<% } %>
 			</div>
 		</div>
 		<div class="info">
@@ -57,103 +70,119 @@
 		</div>
 	</main>
 
-	<div class="popup">
-		<div class="popup_wrapper">
-			<form action="/connection/add" method="POST" class="popup_form">
-				<button class="close">&times;</button>
-				<h2>Share your info with <%= name %></h2>
-				<input type="hidden" name="id" value="<%= _id %>" />
-				<div class="form-fields">
-					<div class="form-check">
-						<input type="checkbox" name="existing_user" id="exist" />
-						<label for="exist">Already Using Yuzbi</label>
+	<% if(!private && !zerolinks) { %>
+		<div class="popup">
+			<div class="popup_wrapper">
+				<form action="/connection/add" method="POST" class="popup_form">
+					<button class="close">&times;</button>
+					<h2>Share your info with <%= name %></h2>
+					<input type="hidden" name="id" value="<%= _id %>" />
+					<div class="form-fields">
+						<div class="form-check">
+							<input type="checkbox" name="existing_user" id="exist" />
+							<label for="exist">Already Using Yuzbi</label>
+						</div>
+						<div class="form-row" id="email_row">
+							<input type="email" name="email" required placeholder=" " />
+							<label>
+								<span>Email</span>
+							</label>
+						</div>
+						<div class="form-row">
+							<input type="text" id="name" name="name" required pattern="[\w ]+" placeholder=" " />
+							<label>
+								<span>Name</span>
+							</label>
+						</div>
+						<div class="form-row">
+							<input type="text" id="number" name="number" required pattern="[0-9+]+" placeholder=" " />
+							<label>
+								<span>Number</span>
+							</label>
+						</div>
+						<div class="form-row">
+							<input type="text" name="jobTitle" pattern="[\w ]+" placeholder=" " />
+							<label>
+								<span>Job Title</span>
+							</label>
+						</div>
+						<div class="form-row">
+							<input type="text" name="company" pattern="[\w ]+" placeholder=" " />
+							<label>
+								<span>Company</span>
+							</label>
+						</div>
+						<div class="form-row">
+							<input type="text" name="note" pattern="[\w ]+" placeholder=" " />
+							<label>
+								<span>Note</span>
+							</label>
+						</div>
 					</div>
-					<div class="form-row" id="email_row">
-						<input type="email" name="email" required placeholder=" " />
-						<label>
-							<span>Email</span>
-						</label>
+					<div class="btn-row">
+						<button class="btn btn-theme" type="submit">Connect</button>
 					</div>
-					<div class="form-row">
-						<input type="text" id="name" name="name" required pattern="[\w ]+" placeholder=" " />
-						<label>
-							<span>Name</span>
-						</label>
-					</div>
-					<div class="form-row">
-						<input type="text" id="number" name="number" required pattern="[0-9+]+" placeholder=" " />
-						<label>
-							<span>Number</span>
-						</label>
-					</div>
-					<div class="form-row">
-						<input type="text" name="jobTitle" pattern="[\w ]+" placeholder=" " />
-						<label>
-							<span>Job Title</span>
-						</label>
-					</div>
-					<div class="form-row">
-						<input type="text" name="company" pattern="[\w ]+" placeholder=" " />
-						<label>
-							<span>Company</span>
-						</label>
-					</div>
-					<div class="form-row">
-						<input type="text" name="note" pattern="[\w ]+" placeholder=" " />
-						<label>
-							<span>Note</span>
-						</label>
-					</div>
-				</div>
-				<div class="btn-row">
-					<button class="btn btn-theme" type="submit">Connect</button>
-				</div>
-			</form>
+				</form>
+			</div>
 		</div>
-	</div>
 
-	<script type="text/javascript">
-		const yuzbiUserCheckbox = document.querySelector('#exist');
-		const allFieldsExceptEmail = document.querySelectorAll('.popup_form .form-row:not(#email_row)');
+		<script type="text/javascript">
+			const yuzbiUserCheckbox = document.querySelector('#exist');
+			const allFieldsExceptEmail = document.querySelectorAll('.popup_form .form-row:not(#email_row)');
 
-		yuzbiUserCheckbox.addEventListener('change', e => {
-			let checkVal = e.target.checked;
-			allFieldsExceptEmail.forEach(el => {
-				el.classList.toggle('disable');
-			});
-
-			if(checkVal) {
-				document.querySelector('#number').removeAttribute('required', '');
-				document.querySelector('#name').removeAttribute('required', '');
-			} else {
-				document.querySelector('#number').setAttribute('required', '');
-				document.querySelector('#name').setAttribute('required', '');
-			}
-		});
-
-		document.querySelector('.popup_form .close').addEventListener('click', () => {
-			document.querySelector('.popup').classList.remove('active');
-		});
-
-		onload = () => {
-			setTimeout(() => {
-				document.querySelector('.popup').classList.add('active');
-			}, 2000);
-		}
-
-		document.querySelector('.popup_form').addEventListener('submit', e => {
-			document.querySelector('.popup').classList.remove('active');
-			setTimeout(() => {
-				e.target.reset();
+			yuzbiUserCheckbox.addEventListener('change', e => {
+				let checkVal = e.target.checked;
 				allFieldsExceptEmail.forEach(el => {
 					el.classList.toggle('disable');
 				});
-			}, 500)
-		});
 
-		document.querySelector('#open-popup').addEventListener('click', () => {
-			document.querySelector('.popup').classList.add('active');
-		});
+				if(checkVal) {
+					document.querySelector('#number').removeAttribute('required', '');
+					document.querySelector('#name').removeAttribute('required', '');
+				} else {
+					document.querySelector('#number').setAttribute('required', '');
+					document.querySelector('#name').setAttribute('required', '');
+				}
+			});
+
+			document.querySelector('.popup_form .close').addEventListener('click', () => {
+				document.querySelector('.popup').classList.remove('active');
+			});
+
+			onload = () => {
+				setTimeout(() => {
+					document.querySelector('.popup').classList.add('active');
+				}, 2000);
+			}
+
+			document.querySelector('.popup_form').addEventListener('submit', e => {
+				document.querySelector('.popup').classList.remove('active');
+				setTimeout(() => {
+					e.target.reset();
+					allFieldsExceptEmail.forEach(el => {
+						el.classList.toggle('disable');
+					});
+				}, 500)
+			});
+
+			document.querySelector('#open-popup').addEventListener('click', () => {
+				document.querySelector('.popup').classList.add('active');
+			});
+		</script>
+	<% } %>
+
+	<script type="text/javascript">
+		// function resizeCoverImage() {
+		// 	document.querySelector('.admin_cover').style.height = document.querySelector('.admin_cover').getBoundingClientRect().width * 0.375 + 'px';
+		// }
+
+		// onload = function() {
+		// 	resizeCoverImage();
+		// }
+
+		// onresize = function() {
+		// 	resizeCoverImage();
+		// }
 	</script>
 
 </body>

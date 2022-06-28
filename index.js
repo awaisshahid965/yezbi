@@ -5,7 +5,6 @@ const fileUpload = require("express-fileupload");
 const { connectToDatabase } = require('./config/database.config');
 const ProfileCard = require('./models/ProfileCard');
 const { logRequestPathAndType } = require('./middlewares');
-const linksAppSupports = require('./linksAppSupports');
 // var setups
 const app = express();
 
@@ -28,25 +27,11 @@ app.set('views', 'screens');
 connectToDatabase(app);
 
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+	// const usrProfileCard = await ProfileCard.deleteMany({ email : { $nin: ["awais@xyz.com"] } });
+	// console.log(usrProfileCard)
 	res.json({
 		'ServerRunning': 'Okay...'
-	})
-});
-
-app.post('/api/todos', (req, res) => {
-	return res.json({
-		todos: [
-			{
-				title: 'Task1',
-			},
-			{
-				title: 'Task2',
-			},
-			{
-				title: 'Task3',
-			},
-		],
 	});
 });
 
@@ -60,36 +45,10 @@ app.post('/api/todos', (req, res) => {
 	** brown:  #a79245
 	** green:  #42957a
 */
-app.get('/:sid/share', async (req, res) => {
-	let { sid } = req.params;
-	try {
-		const {
-				_id,
-				name,
-				email,
-				coverImgUrl,
-				profileImgUrl,
-				theme,
-				location,
-				links
-		} = await ProfileCard.findOne({ shortUserId: sid }).select('-connections');
 
 
-		res.render('profile-card', {
-			linksAppSupports,
-			_id,
-			name,
-			email,
-			profileImgUrl,
-			coverImgUrl,
-			theme,
-			location,
-			links
-		});
-	} catch(err) {}
-});
-
-
+app.use(require('./routes/CardWebRoutes'));
 app.use('/api', require('./routes/api/ProfileCardApi'));
 app.use('/api', require('./routes/api/DashboardApi'));
-app.use(require('./routes/CardWebRoutes'));
+
+// { email : { $nin: ["awais@xyz.com"] } }

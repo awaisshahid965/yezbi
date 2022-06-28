@@ -275,7 +275,6 @@ module.exports.updateLink = async function(req, res) {
 	}
 }
 
-
 module.exports.updateEditProfileObselete = async function(req, res) {
 	let {
 			email = '',
@@ -341,7 +340,6 @@ module.exports.updateEditProfileObselete = async function(req, res) {
 		});
 	}
 }
-
 
 module.exports.toggleProfileVisibility = async function(req, res) {
 	let { toggleVisibility = false, email = '' } = req.body;
@@ -668,6 +666,28 @@ module.exports.deleteConnection = async function(req, res) {
 			connectionDeleted: false,
 			connection: null,
 			error: "Failed to Delete Connection! possible reasons: Invalid email/connection-id OR no user found..."
+		});
+	}
+}
+
+module.exports.getConnection = async function(req, res) {
+	let { email = '' } = req.body; 
+	try {
+		if (!email) {
+			throw new Error();
+		}
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('-_id connections').lean();
+		if (!usrProfileCard) {
+			throw new Error();
+		}
+		res.status(200).json({
+			connections: usrProfileCard.connections
+		});
+
+	} catch(err) {
+		res.status(500).json({
+			connections: null,
+			error: "Failed to get data! possible reasons: User Profile Card Not Found..."
 		});
 	}
 }

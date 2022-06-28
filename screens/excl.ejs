@@ -1,0 +1,23 @@
+				<div class="actions">
+					<% !private && links.forEach(function(link) { %>
+						<div class="action_card">
+							<a href="<%= linksAppSupports[link.linkType].hrefType %><%= link.linkValue %>" class="action_link whatsapp">
+								<%- linksAppSupports[link.linkType].icon %>
+							</a>
+							<p class="action_title"><%= link.linkName %></p>
+						</div>
+					<% }); %> 
+
+					<% if(private) { %>
+						<div class="text-private">
+							User choose to hide identity!
+						</div>
+					<% } %>
+				</div>
+				<div class="admin_btns">
+					<% if(!private) { %>
+						<button id="open-popup" class="btn btn-primary">
+							Exchange Contacts
+						</button>
+					<% } %>
+				</div>

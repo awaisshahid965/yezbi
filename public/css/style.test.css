@@ -96,23 +96,35 @@ a:visited {
 	min-height: 30rem;
 }
 
+@media(max-width: 555px) {
+	.admin_banner {
+		min-height: 27rem;
+	}
+}
+
 .admin_cover {
 	display: block;
 	width: 100%;
 	height: 22.5rem;
 }
 
+@media(max-width: 555px) {
+	.admin_cover {
+		height: 18.5rem;
+	}
+}
+
 .admin_card--wrapper {
 	padding: 0 3rem;
 }
 
-@media (max-width: 500px) {
+@media(max-width: 500px) {
 	.admin_card--wrapper  {
 		padding: 0 1.5rem;
 	}
 }
 
-@media (max-width: 400px) {
+@media(max-width: 400px) {
 	.admin_card--wrapper  {
 		padding: 0 1rem;
 	}
@@ -286,13 +298,14 @@ a:visited {
 
 .popup_wrapper {
 	width: 100%;
+	padding: 0 1rem;
 }
 
 .popup_form {
 	max-width: 50rem;
 	margin: 0 auto;
 	background-color: #fff;
-	border-radius: 20px;
+	border-radius: 2rem;
 	position: relative;
 	padding: 2rem;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, .25);
@@ -318,7 +331,7 @@ a:visited {
 	margin-bottom: 2.65rem;
 	font-weight: 500;
 	line-height: 1.6;
-	font-size: 20px;
+	font-size: 2rem;
 	text-align: center;
 	border-bottom: 1px solid #ddd;
 }
@@ -326,7 +339,7 @@ a:visited {
 .popup_form .form-row {
 	margin-bottom: 1.5rem;
 	position: relative;
-	font-size: 16px;
+	font-size: 1.6rem;
 }
 
 .popup_form .form-row.disable {
@@ -346,6 +359,7 @@ a:visited {
 	color: #7f7f7f;
 	transition: .3s all;
 }
+
 .popup_form .form-row input:focus + label,
 .popup_form .form-row input:-webkit-autofill + label,
 .popup_form .form-row input:not(:placeholder-shown) + label {
@@ -353,6 +367,15 @@ a:visited {
 	transform: translateY(-20%);
 	font-size: 13px;
 
+}
+
+@media(max-width: 400px) {
+	.popup_form .form-row input:focus + label,
+	.popup_form .form-row input:-webkit-autofill + label,
+	.popup_form .form-row input:not(:placeholder-shown) + label {
+		font-size: 11px;
+
+	}
 }
 
 .popup_form .form-row input:-webkit-autofill {
@@ -364,7 +387,7 @@ a:visited {
 }
 
 .popup_form .form-row input {
-	padding: 10px 16px;
+	padding: 1rem 16px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	font-size: inherit;
@@ -383,7 +406,7 @@ a:visited {
 }
 
 .popup_form .btn {
-	font-size: 17px;
+	font-size: 1.7rem;
 	padding-top: 1.5rem;
 	padding-bottom: 1.5rem;
 }
@@ -398,6 +421,12 @@ a:visited {
 	flex-direction: row-reverse;
 }
 
+@media(max-width: 400px) {
+	.form-check {
+		font-size: 12px;
+	}
+}
+
 .form-check > * {
 	display: inline-block;
 	cursor: pointer;
@@ -407,4 +436,13 @@ a:visited {
 .form-check label {
 	padding-right: 5px;
 	color: slateblue;
+}
+
+
+/* extra */
+
+.text-warn {
+	padding: 5rem 0 2rem;
+	font-size: 1.5rem;
+	color: #eb6207;
 }
