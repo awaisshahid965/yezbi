@@ -1,6 +1,12 @@
 const cardWebRoute = require('express').Router();
-const { addConnection } = require('../controller/CardWebController');
+const {
+	addConnection,
+	getProfileCard
+} = require('../controller/CardWebController');
 
+
+
+cardWebRoute.get('/:sid/share', getProfileCard);
 
 
 cardWebRoute.post('/connection/add', addConnection);

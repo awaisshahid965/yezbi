@@ -10,14 +10,15 @@ const {
 	toggleProfileVisibility,
 	toggleLinkVisibility,
 	deleteLink,
-	deleteConnection
+	deleteConnection,
+	getConnection
 } = require('../../controller/ProfileCardController');
 const { decodeToken, matchEmail } = require('../../middlewares');
 
 
 
-profileAuthRoute.use(decodeToken);
-profileAuthRoute.use(matchEmail);
+// profileAuthRoute.use(decodeToken);
+// profileAuthRoute.use(matchEmail);
 
 
 // POST ROUTES
@@ -42,6 +43,7 @@ profileAuthRoute.post('/toggle/link-visibility', toggleLinkVisibility);
 profileAuthRoute.post('/link/delete', deleteLink);
 
 profileAuthRoute.post('/connection/delete', deleteConnection);
+profileAuthRoute.post('/connection/get', getConnection);
 
 
 module.exports = profileAuthRoute;
