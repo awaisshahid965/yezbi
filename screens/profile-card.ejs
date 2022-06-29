@@ -134,6 +134,11 @@
 				let checkVal = e.target.checked;
 				allFieldsExceptEmail.forEach(el => {
 					el.classList.toggle('disable');
+					if(checkVal) {
+						el.querySelector('input').setAttribute('disabled', '');
+					} else {
+						el.querySelector('input').removeAttribute('disabled', '');
+					}
 				});
 
 				if(checkVal) {
@@ -160,7 +165,8 @@
 				setTimeout(() => {
 					e.target.reset();
 					allFieldsExceptEmail.forEach(el => {
-						el.classList.toggle('disable');
+						el.classList.remove('disable');
+						el.querySelector('input').removeAttribute('disabled', '');
 					});
 				}, 500)
 			});

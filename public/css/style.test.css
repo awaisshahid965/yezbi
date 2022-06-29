@@ -63,6 +63,12 @@ a:visited {
 	}
 }
 
+@media (max-width: 480px) {
+	.btn {
+		font-size: 12px;
+	}
+}
+
 .btn-primary,
 .btn-primary:visited,
 .btn-primary:link {
@@ -185,10 +191,12 @@ a:visited {
 }
 
 .action_card .action_link {
-	color: var(--cl-theme) !important;font-size: 2.8rem;
+	color: var(--cl-theme) !important;
+	font-size: 2.4rem;
 	background-color: #fff !important;
-	width: 6rem;
-	border: 2px solid;height: 6rem;
+	width: 5.5rem;
+	border: 1px solid;
+	height: 5.5rem;
 	border-radius: 50%;
 	display: flex;
 	justify-content: center;
@@ -199,19 +207,7 @@ a:visited {
 .action_card .action_title {
 	font-size: 12px;
 	margin-top: 3px;
-	font-weight: 600;
-}
-
-.action_link.call {
-	background-color: #ed2476;
-}
-
-.action_link.whatsapp {
-	background-color: #25d366;
-}
-
-.action_link.mail {
-	background-color: #BB001B;
+	font-weight: 400;
 }
 
 .info {
@@ -406,7 +402,7 @@ a:visited {
 }
 
 .popup_form .btn {
-	font-size: 1.7rem;
+	font-size: 1.4rem;
 	padding-top: 1.5rem;
 	padding-bottom: 1.5rem;
 }
