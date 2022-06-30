@@ -76,7 +76,8 @@ module.exports.userProfileImageData = async function(req, res) {
 				userProfileCard.profileImgUrl = imgSrc;
 				await userProfileCard.save();
 				res.status(200).json({
-					fileWritten: true
+					fileWritten: true,
+					imageUrl: `${req.get('host')}${imgSrc}`
 				})
 			}
 		});
@@ -671,7 +672,7 @@ module.exports.deleteConnection = async function(req, res) {
 }
 
 module.exports.getConnection = async function(req, res) {
-	let { email = '' } = req.body; 
+	let { email = '' } = req.body;
 	try {
 		if (!email) {
 			throw new Error();
