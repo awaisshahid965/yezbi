@@ -150,7 +150,7 @@ module.exports.userProfileData = async function(req, res) {
 		if (!email) {
 			throw new Error();
 		}
-		const usrProfileCard = await ProfileCard.findOne({ email }).select('-_id -__v').lean();
+		const usrProfileCard = await ProfileCard.findOne({ email }).select('-_id -__v -connections').lean();
 		if (!usrProfileCard) {
 			throw new Error();
 		}
@@ -555,7 +555,7 @@ module.exports.updateEditProfile = async function(req, res) {
 				location,
 				bio,
 				theme,
-				businessChanged,
+				businessClient: businessChanged,
 				profileImgUrl: usrProfileCard.profileImgUrl,
 				coverImgUrl: usrProfileCard.coverImgUrl
 			}

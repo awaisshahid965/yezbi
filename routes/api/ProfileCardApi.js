@@ -47,3 +47,26 @@ profileAuthRoute.post('/connection/get', getConnection);
 
 
 module.exports = profileAuthRoute;
+
+/*
+void main() {
+ var userDetails = {
+   'name': "Admin",
+   'pass': 'admin123',
+   'id': "980a765b0c",
+   "address": "unknown..."
+ };
+  
+//   var testUser = { ...userDetails, "name": 'Muhammad Awais' };
+  
+  var testUser = {
+    "name": 'Muhammad Awais',
+    'pass': userDetails['pass'],
+    'id': userDetails['id'],
+    'address': userDetails['address'],
+  };
+  
+  print(userDetails);
+  print(testUser);
+}
+*/

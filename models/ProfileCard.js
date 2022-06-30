@@ -15,7 +15,7 @@ const connectionSchema = new Schema({
   number: { type: String, default: '' },
   website: { type: String, default: '' },
   jobTitle: { type: String, default: '' },
-  company: { type: String },
+  company: { type: String, default: '' },
   note: { type: String, default: '' },
   imgUrl: { type: String, default: '' }
 });
