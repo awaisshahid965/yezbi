@@ -22,8 +22,7 @@ module.exports.userProfileCardCreation = async function(req, res) {
 		});
 		await usrProfileCard.save();
 		res.status(200).json({
-			profileCreated: true,
-			shortLink: `${req.get('host')}/${usrProfileCard.shortUserId}/share`
+			profileCreated: true
 		})
 	} catch(err) {
 		res.status(500).json({
@@ -77,7 +76,7 @@ module.exports.userProfileImageData = async function(req, res) {
 				await userProfileCard.save();
 				res.status(200).json({
 					fileWritten: true,
-					imageUrl: `${req.get('host')}${imgSrc}`
+					imageUrl: `${imgSrc}`
 				})
 			}
 		});
