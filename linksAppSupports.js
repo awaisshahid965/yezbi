@@ -100,7 +100,7 @@ const linksAppSupports = {
 		hrefType: ""
 	},
 	"customlink": {
-		icon: '<i class="fa-regular fa-link-slash"></i>',
+		icon: '<i class="fa-solid fa-link-slash"></i>',
 		hrefType: ""
 	},
 	"discord": {
